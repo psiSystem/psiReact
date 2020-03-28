@@ -1,10 +1,10 @@
-package com.okta.developer.jugtours;
+package com.br.psi;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class JugtoursApplicationTests {
+class PsiReactApplicationTests {
 
 	@Test
 	void contextLoads() {

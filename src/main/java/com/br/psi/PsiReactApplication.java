@@ -1,13 +1,13 @@
-package com.br.psi.controller;
+package com.br.psi;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class PsiApplication {
+public class PsiReactApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(PsiApplication.class, args);
+		SpringApplication.run(PsiReactApplication.class, args);
 	}
 
 }

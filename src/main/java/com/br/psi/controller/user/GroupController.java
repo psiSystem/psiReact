@@ -21,21 +21,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.br.psi.repository.user.GroupRepository;
-import com.br.psi.repository.user.UserRepository;
 import com.br.psi.user.Group;
 
 @RestController
-@RequestMapping("/apia")
+@RequestMapping("/api")
 class GroupController {
 
 	private final Logger log = LoggerFactory.getLogger(GroupController.class);
     private GroupRepository groupRepository;
-    private UserRepository userRepository;
-
-    public GroupController(GroupRepository groupRepository, UserRepository userRepository) {
-        this.groupRepository = groupRepository;
-        this.userRepository = userRepository;
-    }
     
     public GroupController(GroupRepository groupRepository) {
         this.groupRepository = groupRepository;
