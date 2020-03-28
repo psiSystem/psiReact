@@ -14,8 +14,10 @@ public class User {
     private String name;
     private String email;
 	
-	public User(String userId, String string, String string2) {
-		// TODO Auto-generated constructor stub
+	public User(String userId, String name, String email) {
+		this.id = Long.valueOf(userId);
+		this.name = name;
+		this.email = email;
 	}
 	public Long getId() {
 		return id;
