@@ -16,7 +16,7 @@ import com.br.psi.repository.PermissionRepository;
 import com.br.psi.repository.UserRepository;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/api")
 public class UserController {
 
     @Autowired
@@ -29,21 +29,21 @@ public class UserController {
     PasswordEncoder passwordEncoder;
 
     @Secured({Const.ROLE_ADMIN})
-    @RequestMapping(value = "", method = RequestMethod.POST)
+    @RequestMapping(value = "/user/save", method = RequestMethod.POST)
     public ResponseEntity<User> save(@RequestBody User user){
         user = this.userRepository.save(user);
         return new ResponseEntity<User>(user, HttpStatus.OK);
     }
 
     @Secured({Const.ROLE_ADMIN})
-    @RequestMapping(value = "", method = RequestMethod.PUT)
+    @RequestMapping(value = "/user/edit", method = RequestMethod.PUT)
     public ResponseEntity<User> edit(@RequestBody User user){
         user = this.userRepository.save(user);
         return new ResponseEntity<User>(user, HttpStatus.OK);
     }
 
     @Secured({Const.ROLE_CLIENT, Const.ROLE_ADMIN})
-    @RequestMapping(value = "", method = RequestMethod.GET)
+    @RequestMapping(value = "/user/findAll", method = RequestMethod.GET)
     public ResponseEntity<Page<User>> list(
             @RequestParam("page") int page,
             @RequestParam("size") int size
