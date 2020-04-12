@@ -31,7 +31,7 @@ public class User {
     private String password;
     private Boolean enable;
     @ManyToOne(cascade = CascadeType.PERSIST)
-	private Person personId;
+	private Person person;
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name="permission_user", joinColumns = @JoinColumn(name="user_id"), inverseJoinColumns = @JoinColumn(name="permission_id")
     )
@@ -90,12 +90,12 @@ public class User {
 		this.enable = enable;
 	}
 
-	public Person getPersonId() {
-		return personId;
+	public Person getPerson() {
+		return person;
 	}
 
-	public void setPersonId(Person personId) {
-		this.personId = personId;
+	public void setPerson(Person person) {
+		this.person = person;
 	}
 
 	public List<Permission> getPermissions() {

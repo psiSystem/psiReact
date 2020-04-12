@@ -16,7 +16,7 @@ public class Person {
 	private Integer cpf;
 	private Integer rg;
 	@ManyToOne(cascade = CascadeType.PERSIST)
-	private Anddress anddressId;
+	private Anddress anddress;
 
 	public Long getId() {
 		return id;
@@ -50,13 +50,12 @@ public class Person {
 		this.rg = rg;
 	}
 
-	public Anddress getAnddressId() {
-		return anddressId;
+	public Anddress getAnddress() {
+		return anddress;
 	}
 
-	public void setAnddressId(Anddress anddressId) {
-		this.anddressId = anddressId;
+	public void setAnddress(Anddress anddress) {
+		this.anddress = anddress;
 	}
-
 	
 }

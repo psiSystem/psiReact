@@ -20,7 +20,7 @@ public class Permission implements GrantedAuthority {
 	private String descricao; 
     private String name;
 	@ManyToOne(cascade = CascadeType.PERSIST)
-	private Module moduleId; 
+	private Module module; 
 
     public Permission(String name, String descricao) {
         this.name = name;
@@ -46,11 +46,12 @@ public class Permission implements GrantedAuthority {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public Module getModuleId() {
-		return moduleId;
+	
+	public Module getModule() {
+		return module;
 	}
-	public void setModuleId(Module moduleId) {
-		this.moduleId = moduleId;
+	public void setModule(Module module) {
+		this.module = module;
 	}
 	public String getDescricao() {
 		return descricao;
