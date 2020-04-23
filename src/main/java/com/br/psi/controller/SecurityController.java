@@ -13,12 +13,10 @@ import com.br.psi.model.User;
 @Controller
 public class SecurityController {
 
-    @RequestMapping(value = "/user-auth", method = RequestMethod.GET)
-    @ResponseBody
-    @Secured({Const.ROLE_CLIENT, Const.ROLE_ADMIN})
-    public User user() {
-        return (User) SecurityContextHolder.getContext()
-                .getAuthentication()
-                .getPrincipal();
-    }
+	@RequestMapping(value = "/user-auth", method = RequestMethod.GET)
+	@ResponseBody
+	@Secured({ Const.ROLE_CLIENT, Const.ROLE_ADMIN })
+	public User user() {
+		return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+	}
 }

@@ -23,9 +23,6 @@ public class UserController {
     private UserRepository userRepository;
 
     @Autowired
-    private PermissionRepository permissionRepository;
-
-    @Autowired
     PasswordEncoder passwordEncoder;
 
     @Secured({Const.ROLE_ADMIN})

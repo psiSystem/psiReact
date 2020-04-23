@@ -17,14 +17,14 @@ public class Permission implements GrantedAuthority {
 	@Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-	private String descricao; 
+	private String description; 
     private String name;
 	@ManyToOne(cascade = CascadeType.PERSIST)
 	private Module module; 
 
-    public Permission(String name, String descricao) {
+    public Permission(String name, String description) {
         this.name = name;
-        this.descricao = descricao;
+        this.description = description;
     }
     public Permission() {
     }
@@ -53,12 +53,14 @@ public class Permission implements GrantedAuthority {
 	public void setModule(Module module) {
 		this.module = module;
 	}
-	public String getDescricao() {
-		return descricao;
+	public String getDescription() {
+		return description;
 	}
-	public void setDescricao(String descricao) {
-		this.descricao = descricao;
+	public void setDescription(String description) {
+		this.description = description;
 	}
+
+	
     
 	
 }
