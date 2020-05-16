@@ -35,7 +35,7 @@ public class Person {
 	@ManyToOne(cascade = CascadeType.PERSIST)
 	private Anddress anddress;
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinTable(name="client", joinColumns = @JoinColumn(name="person_id"))
+	@JoinTable(name="client", inverseJoinColumns = @JoinColumn(name="person_id"))
 	private Client client;
 
 	public Long getId() {

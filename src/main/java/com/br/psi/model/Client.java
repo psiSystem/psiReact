@@ -26,6 +26,14 @@ public class Client {
 	@ManyToOne(cascade = CascadeType.PERSIST)
 	private Person person;
 	
+	public Client() {
+		super();
+	}
+
+	public Client(Long id) {
+		this.id = id;
+	}
+	
 	public Long getId() {
 		return id;
 	}

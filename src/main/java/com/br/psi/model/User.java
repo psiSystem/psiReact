@@ -16,9 +16,6 @@ import javax.persistence.ManyToOne;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import lombok.Getter;
-import lombok.Setter;
-
 @Entity(name = "usuario")
 public class User {
 
@@ -30,8 +27,8 @@ public class User {
     @JsonIgnore
     private String password;
     private Boolean enable;
-    @ManyToOne(cascade = CascadeType.PERSIST)
-	private Person person;
+    @ManyToOne(fetch = FetchType.EAGER)
+    private Person person;
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name="permission_user", joinColumns = @JoinColumn(name="user_id"), inverseJoinColumns = @JoinColumn(name="permission_id")
     )
@@ -50,6 +47,7 @@ public class User {
         this.password = user.getPassword();
         this.permissions = user.getPermissions();
         this.id = user.getId();
+        this.person = user.getPerson();
     }
     public User(String userName,  String password, List<Permission> permissions) {
         super();

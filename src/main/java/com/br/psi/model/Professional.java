@@ -15,10 +15,10 @@ public class Professional {
 	@ManyToOne(cascade = CascadeType.PERSIST)
 	private Person person;
 	@ManyToOne(cascade = CascadeType.PERSIST)
-	private Client Client;
+	private Client client;
 	private Long registerProfessional;
 	@ManyToOne(cascade = CascadeType.PERSIST)
-	private Specialty speciality;
+	private Specialty specialty;
 
 	public Long getId() {
 		return id;
@@ -37,11 +37,11 @@ public class Professional {
 	}
 
 	public Client getClient() {
-		return Client;
+		return client;
 	}
 
 	public void setClient(Client client) {
-		Client = client;
+		this.client = client;
 	}
 
 	public Long getRegisterProfessional() {
@@ -52,14 +52,15 @@ public class Professional {
 		this.registerProfessional = registerProfessional;
 	}
 
-	public Specialty getSpeciality() {
-		return speciality;
+	public Specialty getSpecialty() {
+		return specialty;
 	}
 
-	public void setSpeciality(Specialty speciality) {
-		this.speciality = speciality;
+	public void setSpecialty(Specialty specialty) {
+		this.specialty = specialty;
 	}
 
+	
 	
 
 }
