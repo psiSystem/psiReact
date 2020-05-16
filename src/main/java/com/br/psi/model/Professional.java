@@ -18,7 +18,7 @@ public class Professional {
 	private Client Client;
 	private Long registerProfessional;
 	@ManyToOne(cascade = CascadeType.PERSIST)
-	private Specialty professions;
+	private Specialty speciality;
 
 	public Long getId() {
 		return id;
@@ -52,12 +52,14 @@ public class Professional {
 		this.registerProfessional = registerProfessional;
 	}
 
-	public Specialty getProfessions() {
-		return professions;
+	public Specialty getSpeciality() {
+		return speciality;
 	}
 
-	public void setProfessions(Specialty professions) {
-		this.professions = professions;
+	public void setSpeciality(Specialty speciality) {
+		this.speciality = speciality;
 	}
+
+	
 
 }

@@ -3,6 +3,7 @@ package com.br.psi.model;
 import java.util.Date;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -17,13 +18,19 @@ public class Person {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+	@Column(nullable = false)
 	private String name;
+	@Column(nullable = true)
 	private String nameSocial;
 	@ManyToOne(cascade = CascadeType.PERSIST)
 	private Gender gender;
+	@Column(nullable = false)
 	private Date bornDate;
+	@Column(nullable = false)
 	private String email;
+	@Column(nullable = false)
 	private String cpf;
+	@Column(nullable = false)
 	private String rg;
 	@ManyToOne(cascade = CascadeType.PERSIST)
 	private Anddress anddress;

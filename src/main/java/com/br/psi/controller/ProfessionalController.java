@@ -7,6 +7,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.br.psi.model.Client;
 import com.br.psi.model.Const;
 import com.br.psi.model.Professional;
+import com.br.psi.model.User;
 import com.br.psi.repository.ClientRepository;
 import com.br.psi.repository.ProfessionalRepository;
 
@@ -29,7 +31,13 @@ public class ProfessionalController {
     @Secured({Const.ROLE_ADMIN})
     @RequestMapping(value = "/professional/save", method = RequestMethod.POST)
     public ResponseEntity<Professional> save(@RequestBody Professional professional){
-    	 this.professionalRepository.save(professional);
+    	
+    	User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    	
+    	professional.setClient(user.getPerson().getClient());
+    	
+    	this.professionalRepository.save(professional);
+    	
         return new ResponseEntity<Professional>(professional, HttpStatus.OK);
     }
 

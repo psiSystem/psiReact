@@ -1,6 +1,7 @@
 package com.br.psi.model;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -20,7 +21,9 @@ public class Patient {
 	private CameClinic cameClinic;
 	@ManyToOne(cascade = CascadeType.PERSIST)
 	private PlanHeath planHeath;
+	@Column(nullable = false)
 	private String emergencialPhone;
+	@Column(nullable = false)
 	private String numberPlanHealth;
 
 	public Long getId() {

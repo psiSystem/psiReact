@@ -1,5 +1,6 @@
 package com.br.psi.model;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -11,12 +12,28 @@ public class Anddress {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+	@Column(nullable = false)
 	private String anddress;
+	@Column(nullable = false)
 	private String neighborhood;
+	@Column(nullable = false)
 	private String city;
+	@Column(nullable = false)
 	private String State;
+	@Column(nullable = false)
 	private String country;
+	@Column(nullable = true)
 	private String complement;
+	@Column(nullable = false)
+	private String cep;
+	
+	public String getCep() {
+		return cep;
+	}
+
+	public void setCep(String cep) {
+		this.cep = cep;
+	}
 
 	public Long getId() {
 		return id;
