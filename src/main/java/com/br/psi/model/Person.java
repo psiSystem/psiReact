@@ -22,7 +22,7 @@ public class Person {
 	private String name;
 	@Column(nullable = true)
 	private String nameSocial;
-	@ManyToOne(cascade = CascadeType.PERSIST)
+	@ManyToOne(fetch = FetchType.EAGER)
 	private Gender gender;
 	@Column(nullable = false)
 	private Date bornDate;

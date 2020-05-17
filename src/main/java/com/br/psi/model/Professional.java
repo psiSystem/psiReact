@@ -2,6 +2,7 @@ package com.br.psi.model;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -14,10 +15,10 @@ public class Professional {
 	private Long id;
 	@ManyToOne(cascade = CascadeType.PERSIST)
 	private Person person;
-	@ManyToOne(cascade = CascadeType.PERSIST)
+	@ManyToOne(fetch = FetchType.EAGER)
 	private Client client;
 	private Long registerProfessional;
-	@ManyToOne(cascade = CascadeType.PERSIST)
+	@ManyToOne(fetch = FetchType.EAGER)
 	private Specialty specialty;
 
 	public Long getId() {
