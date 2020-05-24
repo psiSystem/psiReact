@@ -1,4 +1,6 @@
 package com.br.psi.controller;
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -30,7 +32,7 @@ public class ProfessionalController {
 
     @Secured({Const.ROLE_ADMIN})
     @RequestMapping(value = "/professional/save", method = RequestMethod.POST)
-    public ResponseEntity<Professional> save(@RequestBody Professional professional){
+    public ResponseEntity<Professional> save(@RequestBody @Valid Professional professional){
     	
     	User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     	
@@ -38,7 +40,7 @@ public class ProfessionalController {
     	
     	this.professionalRepository.save(professional);
     	
-        return new ResponseEntity<Professional>(professional, HttpStatus.OK);
+        return new ResponseEntity<Professional>(professional, HttpStatus.CREATED);
     }
 
     @Secured({Const.ROLE_ADMIN})

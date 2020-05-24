@@ -5,6 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.validation.constraints.NotBlank;
 
 @Entity
 public class Anddress {
@@ -13,18 +14,24 @@ public class Anddress {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	@Column(nullable = false)
+	@NotBlank(message = "{campo.obrigatorio}")
 	private String anddress;
 	@Column(nullable = false)
+	@NotBlank(message = "{campo.obrigatorio}")
 	private String neighborhood;
 	@Column(nullable = false)
+	@NotBlank(message = "{campo.obrigatorio}")
 	private String city;
 	@Column(nullable = false)
-	private String State;
+	@NotBlank(message = "{campo.obrigatorio}")
+	private String state;
 	@Column(nullable = false)
+	@NotBlank(message = "{campo.obrigatorio}")
 	private String country;
 	@Column(nullable = true)
 	private String complement;
 	@Column(nullable = false)
+	@NotBlank(message = "{campo.obrigatorio}")
 	private String cep;
 	
 	public String getCep() {
@@ -68,11 +75,11 @@ public class Anddress {
 	}
 
 	public String getState() {
-		return State;
+		return state;
 	}
 
 	public void setState(String state) {
-		State = state;
+		this.state = state;
 	}
 
 	public String getCountry() {

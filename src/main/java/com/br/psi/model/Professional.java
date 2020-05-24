@@ -7,17 +7,23 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
 
 @Entity
 public class Professional {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	@ManyToOne(cascade = CascadeType.PERSIST)
+	@Valid
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private Person person;
 	@ManyToOne(fetch = FetchType.EAGER)
 	private Client client;
+	@NotNull
 	private Long registerProfessional;
+	@Valid
 	@ManyToOne(fetch = FetchType.EAGER)
 	private Specialty specialty;
 

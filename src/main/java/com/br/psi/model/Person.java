@@ -12,27 +12,39 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
+import javax.validation.Valid;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Entity
 public class Person {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+	@NotBlank(message = "{campo.obrigatorio}")
 	@Column(nullable = false)
 	private String name;
 	@Column(nullable = true)
 	private String nameSocial;
+	@Valid
 	@ManyToOne(fetch = FetchType.EAGER)
 	private Gender gender;
+	@NotNull
 	@Column(nullable = false)
 	private Date bornDate;
+	@NotBlank(message = "{campo.obrigatorio}")
+	@Email
 	@Column(nullable = false)
 	private String email;
-	@Column(nullable = false)
+	@NotBlank(message = "{campo.obrigatorio}")
+	@Column(nullable = false, unique = true)
 	private String cpf;
 	@Column(nullable = false)
+	@NotBlank(message = "{campo.obrigatorio}")
 	private String rg;
-	@ManyToOne(cascade = CascadeType.PERSIST)
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+	@Valid
 	private Anddress anddress;
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinTable(name="client", inverseJoinColumns = @JoinColumn(name="person_id"))
