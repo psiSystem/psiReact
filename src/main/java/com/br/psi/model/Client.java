@@ -23,8 +23,6 @@ public class Client {
 	private String cnpj;
 	@ManyToOne(cascade = CascadeType.PERSIST)
 	private Anddress anddress;
-	@ManyToOne(cascade = CascadeType.PERSIST)
-	private Person person;
 	
 	public Client() {
 		super();
@@ -40,14 +38,6 @@ public class Client {
 
 	public void setId(Long id) {
 		this.id = id;
-	}
-
-	public Person getPerson() {
-		return person;
-	}
-
-	public void setPerson(Person person) {
-		this.person = person;
 	}
 
 	public String getName() {

@@ -47,9 +47,9 @@ public class Person {
 	@Valid
 	private Anddress anddress;
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinTable(name="client", inverseJoinColumns = @JoinColumn(name="person_id"))
+	@JoinTable(name = "person_client" , joinColumns = @JoinColumn(name = "person_id"), inverseJoinColumns = @JoinColumn(name="client_id"))
 	private Client client;
-
+	
 	public Long getId() {
 		return id;
 	}

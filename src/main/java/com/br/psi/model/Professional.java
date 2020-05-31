@@ -7,9 +7,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-
 
 @Entity
 public class Professional {
@@ -19,8 +19,6 @@ public class Professional {
 	@Valid
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private Person person;
-	@ManyToOne(fetch = FetchType.EAGER)
-	private Client client;
 	@NotNull
 	private Long registerProfessional;
 	@Valid
@@ -43,14 +41,6 @@ public class Professional {
 		this.person = person;
 	}
 
-	public Client getClient() {
-		return client;
-	}
-
-	public void setClient(Client client) {
-		this.client = client;
-	}
-
 	public Long getRegisterProfessional() {
 		return registerProfessional;
 	}
@@ -66,8 +56,5 @@ public class Professional {
 	public void setSpecialty(Specialty specialty) {
 		this.specialty = specialty;
 	}
-
-	
-	
 
 }
