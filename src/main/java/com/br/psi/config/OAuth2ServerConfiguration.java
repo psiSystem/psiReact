@@ -22,10 +22,6 @@ import org.springframework.security.oauth2.provider.token.store.InMemoryTokenSto
 
 import com.br.psi.service.MyUserDetailsService;
 
-/**
- *
- * @author Nataniel Paiva <nataniel.paiva@gmail.com>
- */
 @Configuration
 public class OAuth2ServerConfiguration {
 

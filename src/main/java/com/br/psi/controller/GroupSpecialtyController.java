@@ -43,7 +43,7 @@ public class GroupSpecialtyController {
         return new ResponseEntity<GroupSpecialty>(groupSpecialty, HttpStatus.OK);
     }
 
-    @Secured({Const.ROLE_CLIENT, Const.ROLE_ADMIN})
+    @Secured({Const.ROLE_CLIENT, Const.ROLE_ADMIN,Const.ROLE_PRFESSIONAL})
     @RequestMapping(value = "/groupSpecialty/findAll", method = RequestMethod.GET)
     public ResponseEntity<List<GroupSpecialty>> list(){
         return new ResponseEntity<List<GroupSpecialty>>(groupSpecialtyRepository.findAll(), HttpStatus.OK);

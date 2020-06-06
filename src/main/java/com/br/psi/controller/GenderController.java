@@ -35,7 +35,7 @@ public class GenderController {
         return new ResponseEntity<Gender>(gender, HttpStatus.OK);
     }
 
-    @Secured({Const.ROLE_CLIENT, Const.ROLE_ADMIN})
+    @Secured({Const.ROLE_CLIENT, Const.ROLE_ADMIN,Const.ROLE_PRFESSIONAL})
     @RequestMapping(value = "/gender/findAll", method = RequestMethod.GET)
     public ResponseEntity<List<Gender>> list(){
         return new ResponseEntity<List<Gender>>(genderRepository.findAll(), HttpStatus.OK);

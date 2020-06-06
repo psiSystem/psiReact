@@ -1,5 +1,7 @@
 package com.br.psi.model;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.persistence.CascadeType;
@@ -25,8 +27,6 @@ public class Person {
 	@NotBlank(message = "{campo.obrigatorio}")
 	@Column(nullable = false)
 	private String name;
-	@Column(nullable = true)
-	private String nameSocial;
 	@Valid
 	@ManyToOne(fetch = FetchType.EAGER)
 	private Gender gender;
@@ -49,6 +49,8 @@ public class Person {
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinTable(name = "person_client" , joinColumns = @JoinColumn(name = "person_id"), inverseJoinColumns = @JoinColumn(name="client_id"))
 	private Client client;
+	@NotBlank(message = "{campo.obrigatorio}")
+	private String phone;
 	
 	public Long getId() {
 		return id;
@@ -66,14 +68,6 @@ public class Person {
 		this.name = name;
 	}
 
-	public String getNameSocial() {
-		return nameSocial;
-	}
-
-	public void setNameSocial(String nameSocial) {
-		this.nameSocial = nameSocial;
-	}
-
 	public Gender getGender() {
 		return gender;
 	}
@@ -82,7 +76,8 @@ public class Person {
 		this.gender = gender;
 	}
 
-	public Date getBornDate() {
+	public Date getBornDate() throws ParseException {
+		
 		return bornDate;
 	}
 
@@ -128,6 +123,14 @@ public class Person {
 
 	public void setClient(Client client) {
 		this.client = client;
+	}
+
+	public String getPhone() {
+		return phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone;
 	}
 	
 	

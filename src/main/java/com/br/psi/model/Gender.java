@@ -11,7 +11,7 @@ import javax.validation.constraints.NotNull;
 public class Gender {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@NotNull
+	@NotNull(message = "{campo.obrigatorio}")
 	private Long id;
 	@Column(nullable = false)
 	private String description;

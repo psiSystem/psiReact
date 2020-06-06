@@ -38,7 +38,7 @@ public class ClientController {
         return new ResponseEntity<Client>(client, HttpStatus.OK);
     }
 
-    @Secured({Const.ROLE_CLIENT, Const.ROLE_ADMIN})
+    @Secured({Const.ROLE_CLIENT, Const.ROLE_ADMIN,Const.ROLE_PRFESSIONAL})
     @RequestMapping(value = "/client/findAll", method = RequestMethod.GET)
     public ResponseEntity<Page<Client>> list(
             @RequestParam("page") int page,

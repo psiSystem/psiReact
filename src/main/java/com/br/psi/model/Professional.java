@@ -8,7 +8,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import javax.persistence.Transient;
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 @Entity
@@ -19,12 +21,14 @@ public class Professional {
 	@Valid
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private Person person;
-	@NotNull
+	@NotNull(message = "{campo.obrigatorio}")
 	private Long registerProfessional;
 	@Valid
 	@ManyToOne(fetch = FetchType.EAGER)
 	private Specialty specialty;
-
+	@Transient
+	private String password;
+	
 	public Long getId() {
 		return id;
 	}
@@ -57,4 +61,13 @@ public class Professional {
 		this.specialty = specialty;
 	}
 
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	
 }

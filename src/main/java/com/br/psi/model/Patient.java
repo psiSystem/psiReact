@@ -3,28 +3,38 @@ package com.br.psi.model;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.Transient;
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Entity
 public class Patient {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	@ManyToOne(cascade = CascadeType.PERSIST)
+	@Valid
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private Person person;
-	@ManyToOne(cascade = CascadeType.PERSIST)
-	private Client client;
-	@ManyToOne(cascade = CascadeType.PERSIST)
+	@ManyToOne(fetch = FetchType.EAGER)
 	private CameClinic cameClinic;
-	@ManyToOne(cascade = CascadeType.PERSIST)
+	@Valid
+	@ManyToOne(fetch = FetchType.EAGER)
 	private PlanHeath planHeath;
+	@NotBlank(message = "{campo.obrigatorio}")
 	@Column(nullable = false)
 	private String emergencialPhone;
+	@NotBlank(message = "{campo.obrigatorio}")
 	@Column(nullable = false)
 	private String numberPlanHealth;
+	
+	@Transient
+	private String password;
 
 	public Long getId() {
 		return id;
@@ -40,14 +50,6 @@ public class Patient {
 
 	public void setPerson(Person person) {
 		this.person = person;
-	}
-
-	public Client getClient() {
-		return client;
-	}
-
-	public void setClient(Client client) {
-		this.client = client;
 	}
 
 	public CameClinic getCameClinic() {
@@ -82,4 +84,13 @@ public class Patient {
 		this.numberPlanHealth = numberPlanHealth;
 	}
 
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	
 }

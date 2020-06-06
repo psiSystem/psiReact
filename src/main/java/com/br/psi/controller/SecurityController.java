@@ -15,7 +15,7 @@ public class SecurityController {
 
 	@RequestMapping(value = "/user-auth", method = RequestMethod.GET)
 	@ResponseBody
-	@Secured({ Const.ROLE_CLIENT, Const.ROLE_ADMIN })
+	@Secured({ Const.ROLE_CLIENT, Const.ROLE_ADMIN ,Const.ROLE_PRFESSIONAL})
 	public User user() {
 		return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 	}

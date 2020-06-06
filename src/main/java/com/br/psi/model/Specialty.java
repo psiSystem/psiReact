@@ -2,6 +2,7 @@ package com.br.psi.model;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -12,12 +13,12 @@ import javax.validation.constraints.NotNull;
 public class Specialty {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@NotNull
+	@NotNull(message = "{campo.obrigatorio}")
 	private Long id;
 	private String name;
 	private String description;
 	private Long cbo;
-	@ManyToOne(cascade = CascadeType.PERSIST)
+	@ManyToOne(fetch = FetchType.EAGER)
 	private GroupSpecialty groupSpecialty;
 
 	public GroupSpecialty getGroupSpecialty() {

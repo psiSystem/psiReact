@@ -41,7 +41,7 @@ public class PlanHeathController {
         return new ResponseEntity<PlanHeath>(planHeath, HttpStatus.OK);
     }
 
-    @Secured({Const.ROLE_CLIENT, Const.ROLE_ADMIN})
+    @Secured({Const.ROLE_CLIENT, Const.ROLE_ADMIN,Const.ROLE_PRFESSIONAL})
     @RequestMapping(value = "/planHeath/findAll", method = RequestMethod.GET)
     public ResponseEntity<List<PlanHeath>> list(){
         return new ResponseEntity<List<PlanHeath>>(planHeathRepository.findAll(), HttpStatus.OK);
