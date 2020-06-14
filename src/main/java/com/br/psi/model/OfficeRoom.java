@@ -1,11 +1,15 @@
 package com.br.psi.model;
 
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.Transient;
 
 @Entity
 public class OfficeRoom {
@@ -16,6 +20,17 @@ public class OfficeRoom {
 	@ManyToOne(fetch = FetchType.EAGER)
 	private Client client;
 	private String decription;
+	@Transient 
+	private List<DayWeek> listDayWeek;
+	
+	
+	public List<DayWeek> getListDayWeek() {
+		return listDayWeek;
+	}
+
+	public void setListDayWeek(List<DayWeek> listDayWeek) {
+		this.listDayWeek = listDayWeek;
+	}
 
 	public Long getId() {
 		return id;

@@ -1,5 +1,6 @@
 package com.br.psi.model;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -13,11 +14,10 @@ public class Shifts {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
 	private DayWeek dayWeek;
-	private String time_start;
-	private String time_end;
-	private String decription;
+	private String timeStart;
+	private String timeEnd;
 	@ManyToOne(fetch = FetchType.EAGER)
 	private Professional professional;
 
@@ -37,28 +37,20 @@ public class Shifts {
 		this.dayWeek = dayWeek;
 	}
 
-	public String getTime_start() {
-		return time_start;
+	public String getTimeStart() {
+		return timeStart;
 	}
 
-	public void setTime_start(String time_start) {
-		this.time_start = time_start;
+	public void setTimeStart(String timeStart) {
+		this.timeStart = timeStart;
 	}
 
-	public String getTime_end() {
-		return time_end;
+	public String getTimeEnd() {
+		return timeEnd;
 	}
 
-	public void setTime_end(String time_end) {
-		this.time_end = time_end;
-	}
-
-	public String getDecription() {
-		return decription;
-	}
-
-	public void setDecription(String decription) {
-		this.decription = decription;
+	public void setTimeEnd(String timeEnd) {
+		this.timeEnd = timeEnd;
 	}
 
 	public Professional getProfessional() {
