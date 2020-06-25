@@ -86,7 +86,7 @@ public class OAuth2ServerConfiguration {
                     .refreshTokenValiditySeconds(300000)
                     .resourceIds(RESOURCE_ID)
                     .secret(passwordEncoder.encode("123"))
-                    .accessTokenValiditySeconds(50000)
+                    .accessTokenValiditySeconds(2700) // 45 minutos
             ;
 
         }
