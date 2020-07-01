@@ -1,5 +1,11 @@
 package com.br.psi.controller;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -36,10 +42,39 @@ public class ScheduleController {
     }
 
     @Secured({Const.ROLE_CLIENT, Const.ROLE_ADMIN,Const.ROLE_PRFESSIONAL})
-    @RequestMapping(value = "/schedule/findAll", method = RequestMethod.GET)
-    public ResponseEntity<List<Schedule>> list(){
-        return new ResponseEntity<List<Schedule>>(scheduleRepository.findAll(), HttpStatus.OK);
+    @RequestMapping(value = "/schedule/findByProfession", method = RequestMethod.POST)
+    public ResponseEntity<List<Schedule>> list(@RequestBody Schedule schedule){
+    	List<Schedule> list = scheduleRepository.findByProfessionalAndDateStartAndDateEnd(schedule.getProfessional(),schedule.getDateStart(),schedule.getDateEnd());
+    	list = createListSchedule(list,schedule);
+        return new ResponseEntity<List<Schedule>>(list, HttpStatus.OK);
     }
+
+	private List<Schedule> createListSchedule(List<Schedule> list, Schedule schedule) {
+		List<Schedule> listSchedule = list;
+		int timeSession = 30;
+		long start = schedule.getDateStart().getTime();
+		long end = schedule.getDateEnd().getTime();
+		long interval = end - start;
+		long amoutPosibled = (interval /1000 / 60) / timeSession;
+		Date dateStart = schedule.getDateStart();
+		for (int i = 0; i < amoutPosibled; i++) {
+			Schedule model = new Schedule();
+			model.setDateStart(dateStart);
+			Date dateEnd = new Date(dateStart.getTime());
+			dateEnd.setMinutes(dateEnd.getMinutes()+timeSession);
+			model.setDateEnd(dateEnd);
+			for (Schedule schedule2 : list) {
+				if(schedule2.getDateStart().equals(model.getDateStart())){
+					model = null;
+					break;
+				}
+			}
+			dateStart = dateEnd;
+			if(model != null)
+				listSchedule.add(model);
+		}
+		return listSchedule;
+	}
 
 
 }

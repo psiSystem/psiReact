@@ -38,6 +38,7 @@ public class DayWeekController {
 	    @RequestMapping(value = "/dayWeek/edit", method = RequestMethod.PUT)
 	    public ResponseEntity<DayWeek> edit(@RequestBody DayWeek dayWeek){
 	        this.dayWeekRepository.save(dayWeek);
+	        dayWeek.setDayOfWeek(DayWeek.dayWeek(dayWeek));
 	        return new ResponseEntity<DayWeek>(dayWeek, HttpStatus.OK);
 	    }
 

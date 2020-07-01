@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.br.psi.model.Const;
+import com.br.psi.model.DayWeek;
 import com.br.psi.model.OfficeRoom;
 import com.br.psi.model.User;
 import com.br.psi.repository.DayWeekRepository;
@@ -50,7 +51,7 @@ public class OfficeRoomController {
     		 	dayWeekRepository.save(day);
     		 
     		 day.getListShifts().forEach(shifts -> {
-    			 
+    			 day.setDayOfWeek(DayWeek.dayWeek(day));
     			 shifts.setDayWeek(day);
     			 
     			 shiftsRepository.save(shifts);
@@ -62,7 +63,9 @@ public class OfficeRoomController {
         return new ResponseEntity<OfficeRoom>(officeRoom, HttpStatus.OK);
     }
 
-    @Secured({Const.ROLE_ADMIN})
+    
+
+	@Secured({Const.ROLE_ADMIN})
     @RequestMapping(value = "/officeRoom/edit", method = RequestMethod.PUT)
     public ResponseEntity<OfficeRoom> edit(@RequestBody OfficeRoom officeRoom){
         this.officeRoomRepository.save(officeRoom);

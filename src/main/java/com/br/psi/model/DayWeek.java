@@ -1,8 +1,10 @@
 package com.br.psi.model;
 
+import java.util.Calendar;
 import java.util.List;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -20,6 +22,8 @@ public class DayWeek {
 	@ManyToOne(fetch = FetchType.EAGER)
 	private OfficeRoom officeRoom;
 	private String day;
+	@Column(nullable = true)
+	private Integer dayOfWeek;
 	private Boolean enabled;
 	@Transient
 	private List<Shifts> listShifts;
@@ -64,5 +68,41 @@ public class DayWeek {
 		this.enabled = enabled;
 	}
 
-	
+	public Integer getDayOfWeek() {
+		return dayOfWeek;
+	}
+
+	public void setDayOfWeek(Integer dayOfWeek) {
+		this.dayOfWeek = dayOfWeek;
+	}
+
+	public static int dayWeek(DayWeek day) {
+    	int dayWeek = 0;
+		switch (day.getDay()) {
+		case "Segunda Feira":
+			dayWeek = Calendar.MONDAY - 1;
+			break;
+		case "Terça Feira":
+			dayWeek = Calendar.TUESDAY - 1;
+			break;
+		case "Quarta Feira":
+			dayWeek = Calendar.WEDNESDAY - 1;
+			break;
+		case "Quinta Feira":
+			dayWeek = Calendar.THURSDAY - 1;
+			break;
+		case "Sexta Feira":
+			dayWeek = Calendar.FRIDAY - 1;
+			break;
+		case "Sábado":
+			dayWeek = Calendar.SATURDAY - 1;
+			break;
+		case "Domingo":
+			dayWeek = Calendar.SUNDAY - 1;
+			break;
+		default:
+			break;
+		}
+		return dayWeek;
+	}
 }

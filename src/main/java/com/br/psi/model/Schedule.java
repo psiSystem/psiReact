@@ -15,10 +15,8 @@ public class Schedule {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
-	@ManyToOne(fetch = FetchType.EAGER)
-	private Shifts shifts;
-	private Date date_start;
-	private Date date_end;
+	private Date dateStart;
+	private Date dateEnd;
 	@ManyToOne(fetch = FetchType.EAGER)
 	private Patient patient;
 	@ManyToOne(fetch = FetchType.EAGER)
@@ -32,28 +30,20 @@ public class Schedule {
 		this.id = id;
 	}
 
-	public Shifts getShifts() {
-		return shifts;
+	public Date getDateStart() {
+		return dateStart;
 	}
 
-	public void setShifts(Shifts shifts) {
-		this.shifts = shifts;
+	public void setDateStart(Date dateStart) {
+		this.dateStart = dateStart;
 	}
 
-	public Date getDate_start() {
-		return date_start;
+	public Date getDateEnd() {
+		return dateEnd;
 	}
 
-	public void setDate_start(Date date_start) {
-		this.date_start = date_start;
-	}
-
-	public Date getDate_end() {
-		return date_end;
-	}
-
-	public void setDate_end(Date date_end) {
-		this.date_end = date_end;
+	public void setDateEnd(Date dateEnd) {
+		this.dateEnd = dateEnd;
 	}
 
 	public Patient getPatient() {
