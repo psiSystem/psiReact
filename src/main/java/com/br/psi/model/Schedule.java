@@ -21,7 +21,9 @@ public class Schedule {
 	private Patient patient;
 	@ManyToOne(fetch = FetchType.EAGER)
 	private Professional professional;
-
+	@ManyToOne(fetch = FetchType.EAGER)
+	private Kind kind;
+	
 	public Long getId() {
 		return id;
 	}
@@ -61,5 +63,15 @@ public class Schedule {
 	public void setProfessional(Professional professional) {
 		this.professional = professional;
 	}
+
+	public Kind getKind() {
+		return kind;
+	}
+
+	public void setKind(Kind kind) {
+		this.kind = kind;
+	}
+	
+	
 
 }

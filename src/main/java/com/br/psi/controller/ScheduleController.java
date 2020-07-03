@@ -3,6 +3,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -29,23 +30,56 @@ public class ScheduleController {
 
     @Secured({Const.ROLE_ADMIN})
     @RequestMapping(value = "/schedule/save", method = RequestMethod.POST)
-    public ResponseEntity<Schedule> save(@RequestBody Schedule schedule){
-    	 this.scheduleRepository.save(schedule);
-        return new ResponseEntity<Schedule>(schedule, HttpStatus.OK);
+    public ResponseEntity<List<Schedule>> save(@RequestBody List<Schedule> listSchedule){
+    	for (Schedule schedule : listSchedule) {
+    		if(schedule.getProfessional() != null && schedule.getKind() != null) {
+    				this.scheduleRepository.save(schedule);	
+    		}
+		}
+    	 
+        return new ResponseEntity<List<Schedule>>(listSchedule, HttpStatus.OK);
     }
 
-    @Secured({Const.ROLE_ADMIN})
+
+	@Secured({Const.ROLE_ADMIN})
     @RequestMapping(value = "/schedule/edit", method = RequestMethod.PUT)
     public ResponseEntity<Schedule> edit(@RequestBody Schedule schedule){
         this.scheduleRepository.save(schedule);
         return new ResponseEntity<Schedule>(schedule, HttpStatus.OK);
     }
+	
+	@Secured({Const.ROLE_ADMIN})
+    @RequestMapping(value = "/schedule/delete", method = RequestMethod.POST)
+    public ResponseEntity delete(@RequestBody Schedule schedule){
+        this.scheduleRepository.delete(schedule);
+        return new ResponseEntity<>( HttpStatus.OK);
+    }
+	
 
     @Secured({Const.ROLE_CLIENT, Const.ROLE_ADMIN,Const.ROLE_PRFESSIONAL})
     @RequestMapping(value = "/schedule/findByProfession", method = RequestMethod.POST)
     public ResponseEntity<List<Schedule>> list(@RequestBody Schedule schedule){
     	List<Schedule> list = scheduleRepository.findByProfessionalAndDateStartAndDateEnd(schedule.getProfessional(),schedule.getDateStart(),schedule.getDateEnd());
     	list = createListSchedule(list,schedule);
+    	list.sort(new Comparator<Schedule>() {
+
+			@Override
+			public int compare(Schedule o1, Schedule o2) {
+				if(o1.getId() != null && o2.getId() != null) {
+					if(o1.getId() < o2.getId()) {
+						return -1;
+					}
+					return 1;
+				}
+				
+				if(o1.getId() == null && o2.getId() != null) {
+					return -1;
+				}
+							
+				return 1;
+			}
+    		
+		});
         return new ResponseEntity<List<Schedule>>(list, HttpStatus.OK);
     }
 
@@ -63,8 +97,9 @@ public class ScheduleController {
 			Date dateEnd = new Date(dateStart.getTime());
 			dateEnd.setMinutes(dateEnd.getMinutes()+timeSession);
 			model.setDateEnd(dateEnd);
+			model.setProfessional(schedule.getProfessional());
 			for (Schedule schedule2 : list) {
-				if(schedule2.getDateStart().equals(model.getDateStart())){
+				if(schedule2.getDateStart().compareTo(model.getDateStart()) == 0){
 					model = null;
 					break;
 				}
