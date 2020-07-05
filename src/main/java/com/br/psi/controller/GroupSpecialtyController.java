@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.br.psi.model.Client;
 import com.br.psi.model.Const;
-import com.br.psi.model.GroupSpecialty;
+import com.br.psi.model.Formation;
 import com.br.psi.model.PlanHeath;
 import com.br.psi.repository.GroupSpecialtyRepository;
 import com.br.psi.repository.PlanHeathRepository;
@@ -31,22 +31,22 @@ public class GroupSpecialtyController {
 
     @Secured({Const.ROLE_ADMIN})
     @RequestMapping(value = "/groupSpecialty/save", method = RequestMethod.POST)
-    public ResponseEntity<GroupSpecialty> save(@RequestBody GroupSpecialty groupSpecialty){
+    public ResponseEntity<Formation> save(@RequestBody Formation groupSpecialty){
     	 this.groupSpecialtyRepository.save(groupSpecialty);
-        return new ResponseEntity<GroupSpecialty>(groupSpecialty, HttpStatus.OK);
+        return new ResponseEntity<Formation>(groupSpecialty, HttpStatus.OK);
     }
 
     @Secured({Const.ROLE_ADMIN})
     @RequestMapping(value = "/groupSpecialty/edit", method = RequestMethod.PUT)
-    public ResponseEntity<GroupSpecialty> edit(@RequestBody GroupSpecialty groupSpecialty){
+    public ResponseEntity<Formation> edit(@RequestBody Formation groupSpecialty){
         this.groupSpecialtyRepository.save(groupSpecialty);
-        return new ResponseEntity<GroupSpecialty>(groupSpecialty, HttpStatus.OK);
+        return new ResponseEntity<Formation>(groupSpecialty, HttpStatus.OK);
     }
 
     @Secured({Const.ROLE_CLIENT, Const.ROLE_ADMIN,Const.ROLE_PRFESSIONAL})
     @RequestMapping(value = "/groupSpecialty/findAll", method = RequestMethod.GET)
-    public ResponseEntity<List<GroupSpecialty>> list(){
-        return new ResponseEntity<List<GroupSpecialty>>(groupSpecialtyRepository.findAll(), HttpStatus.OK);
+    public ResponseEntity<List<Formation>> list(){
+        return new ResponseEntity<List<Formation>>(groupSpecialtyRepository.findAll(), HttpStatus.OK);
     }
 
 

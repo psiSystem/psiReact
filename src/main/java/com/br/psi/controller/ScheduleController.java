@@ -1,5 +1,7 @@
 package com.br.psi.controller;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -7,6 +9,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -30,15 +33,94 @@ public class ScheduleController {
 
     @Secured({Const.ROLE_ADMIN})
     @RequestMapping(value = "/schedule/save", method = RequestMethod.POST)
-    public ResponseEntity<List<Schedule>> save(@RequestBody List<Schedule> listSchedule){
+    public ResponseEntity<List<Schedule>> save(@RequestBody List<Schedule> listSchedule) throws ParseException{
     	for (Schedule schedule : listSchedule) {
     		if(schedule.getProfessional() != null && schedule.getKind() != null) {
-    				this.scheduleRepository.save(schedule);	
+    				List<Schedule> list = scheduleRepository.findByProfessionalAndDayOfWeekAndPatient(schedule.getProfessional(),schedule.getDayOfWeek(),schedule.getPatient());
+    				proccessKindSchedule(schedule,list);
     		}
 		}
     	 
         return new ResponseEntity<List<Schedule>>(listSchedule, HttpStatus.OK);
     }
+
+
+	private void proccessKindSchedule(Schedule schedule, List<Schedule> listSch) throws ParseException {
+			switch (schedule.getKind().getAmountDay()) {
+			case 0:
+				createUnique(schedule,listSch);
+				break;
+			case 7:
+				createWeek(schedule,listSch);
+				break;
+			case 14:
+				createBiweekly(schedule,listSch);
+				break;
+			case 28:
+				createMonth(schedule,listSch);
+				break;
+			default:
+				break;
+			}
+		
+	}
+
+	private void creatList(Schedule schedule, List<Schedule> list) {
+			list.add(schedule);
+			for (int i = 1; i <= schedule.getKind().getAmountMultiple() ; i++) {
+				Date dateStart = new Date(schedule.getDateStart().getTime());
+				Date dateEnd = new Date(schedule.getDateEnd().getTime());
+				Schedule model = new Schedule();
+				model.setProfessional(schedule.getProfessional());
+				model.setPatient(schedule.getPatient());
+				model.setKind(schedule.getKind());
+				dateStart.setDate(dateStart.getDate() + (schedule.getKind().getAmountDay() * i));
+				dateEnd.setDate(dateEnd.getDate() + (schedule.getKind().getAmountDay() * i));
+				model.setDateStart(dateStart);
+				model.setDateEnd(dateEnd);
+				model.setDayOfWeek(schedule.getDayOfWeek());
+				list.add(model);
+			}
+		
+		
+	}
+
+	private void createMonth(Schedule schedule, List<Schedule> list) {
+		if(!list.isEmpty())
+			deleteList(list);
+		
+		creatList(schedule,list);
+		this.scheduleRepository.saveAll(list);
+	}
+
+	private void createBiweekly(Schedule schedule, List<Schedule> list) {
+		if(!list.isEmpty())
+			deleteList(list);
+		
+		creatList(schedule,list);
+		this.scheduleRepository.saveAll(list);
+		
+	}
+
+	private void createWeek(Schedule schedule, List<Schedule> list) {
+		if(!list.isEmpty())
+			deleteList(list);
+		
+		creatList(schedule,list);
+		this.scheduleRepository.saveAll(list);		
+	}
+
+	private void createUnique(Schedule schedule, List<Schedule> list) {
+		if(!list.isEmpty())
+			deleteList(list);
+		this.scheduleRepository.save(schedule);
+	}
+
+
+	private void deleteList(List<Schedule> list) {
+		this.scheduleRepository.deleteAll(list);
+		list.removeAll(list);
+	}
 
 
 	@Secured({Const.ROLE_ADMIN})
@@ -54,6 +136,14 @@ public class ScheduleController {
         this.scheduleRepository.delete(schedule);
         return new ResponseEntity<>( HttpStatus.OK);
     }
+	@Secured({Const.ROLE_ADMIN})
+    @RequestMapping(value = "/schedule/releaseSchedule", method = RequestMethod.POST)
+    public ResponseEntity releaseSchedule(@RequestBody Schedule schedule){
+		schedule = scheduleRepository.findById(schedule.getId());
+		List<Schedule> list = scheduleRepository.findByProfessionalAndDayOfWeekAndPatient(schedule.getProfessional(),schedule.getDayOfWeek(),schedule.getPatient());
+        this.scheduleRepository.deleteAll(list);
+        return new ResponseEntity<>( HttpStatus.OK);
+    }
 	
 
     @Secured({Const.ROLE_CLIENT, Const.ROLE_ADMIN,Const.ROLE_PRFESSIONAL})
@@ -61,7 +151,42 @@ public class ScheduleController {
     public ResponseEntity<List<Schedule>> list(@RequestBody Schedule schedule){
     	List<Schedule> list = scheduleRepository.findByProfessionalAndDateStartAndDateEnd(schedule.getProfessional(),schedule.getDateStart(),schedule.getDateEnd());
     	list = createListSchedule(list,schedule);
-    	list.sort(new Comparator<Schedule>() {
+    	
+        return new ResponseEntity<List<Schedule>>(list, HttpStatus.OK);
+    }
+
+	private List<Schedule> createListSchedule(List<Schedule> list, Schedule schedule) {
+		List<Schedule> listSchedule = list;
+		Date date = new Date();
+		int timeSession = 30;
+		long start = schedule.getDateStart().getTime();
+		long end = schedule.getDateEnd().getTime();
+		long interval = end - start;
+		long amoutPosibled = (interval /1000 / 60) / timeSession;
+		Date dateStart = schedule.getDateStart();
+		for (int i = 0; i < amoutPosibled; i++) {
+			Schedule model = new Schedule();
+			model.setDateStart(dateStart);
+			Date dateEnd = new Date(dateStart.getTime());
+			dateEnd.setMinutes(dateEnd.getMinutes()+timeSession);
+			model.setDateEnd(dateEnd);
+			model.setProfessional(schedule.getProfessional());
+			model.setDayOfWeek(dateStart.getDay());
+			for (Schedule schedule2 : list) {
+				if(schedule2.getDateStart().compareTo(model.getDateStart()) == 0){
+					model = null;
+				}
+				if(dateStart.before(schedule2.getDateEnd())) {
+					dateEnd = schedule2.getDateEnd();
+				}
+			}
+			
+			dateStart = dateEnd;
+			if(model != null && model.getDateStart().after(date) && !model.getDateEnd().after(new Date(end)))
+				listSchedule.add(model);
+		}
+		
+		listSchedule.sort(new Comparator<Schedule>() {
 
 			@Override
 			public int compare(Schedule o1, Schedule o2) {
@@ -80,34 +205,6 @@ public class ScheduleController {
 			}
     		
 		});
-        return new ResponseEntity<List<Schedule>>(list, HttpStatus.OK);
-    }
-
-	private List<Schedule> createListSchedule(List<Schedule> list, Schedule schedule) {
-		List<Schedule> listSchedule = list;
-		int timeSession = 30;
-		long start = schedule.getDateStart().getTime();
-		long end = schedule.getDateEnd().getTime();
-		long interval = end - start;
-		long amoutPosibled = (interval /1000 / 60) / timeSession;
-		Date dateStart = schedule.getDateStart();
-		for (int i = 0; i < amoutPosibled; i++) {
-			Schedule model = new Schedule();
-			model.setDateStart(dateStart);
-			Date dateEnd = new Date(dateStart.getTime());
-			dateEnd.setMinutes(dateEnd.getMinutes()+timeSession);
-			model.setDateEnd(dateEnd);
-			model.setProfessional(schedule.getProfessional());
-			for (Schedule schedule2 : list) {
-				if(schedule2.getDateStart().compareTo(model.getDateStart()) == 0){
-					model = null;
-					break;
-				}
-			}
-			dateStart = dateEnd;
-			if(model != null)
-				listSchedule.add(model);
-		}
 		return listSchedule;
 	}
 

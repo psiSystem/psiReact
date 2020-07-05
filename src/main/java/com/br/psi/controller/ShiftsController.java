@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.br.psi.model.Const;
 import com.br.psi.model.DayWeek;
-import com.br.psi.model.GroupSpecialty;
+import com.br.psi.model.Formation;
 import com.br.psi.model.OfficeRoom;
 import com.br.psi.model.Shifts;
 import com.br.psi.model.User;
@@ -70,10 +70,10 @@ public class ShiftsController {
 
     @Secured({Const.ROLE_CLIENT, Const.ROLE_ADMIN,Const.ROLE_PRFESSIONAL})
     @RequestMapping(value = "/shift/listOfficeRoomCalendar", method = RequestMethod.POST)
-    public ResponseEntity<List<Shifts>> listOfficeRoomCalendar(@RequestBody GroupSpecialty groupSpecialty){
+    public ResponseEntity<List<Shifts>> listOfficeRoomCalendar(@RequestBody Formation formation){
     	list = new ArrayList<Shifts>();
     	User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-    	List<Shifts> findByDayWeekOfficeRoom = shiftsRepository.findByProfessionalSpecialtyGroupSpecialty(groupSpecialty);
+    	List<Shifts> findByDayWeekOfficeRoom = shiftsRepository.findByProfessionalFormation(formation);
     	
     	findByDayWeekOfficeRoom.forEach((shifts) -> {
     		getCalendar(shifts);
@@ -86,7 +86,7 @@ public class ShiftsController {
 		Date start = new Date(shifts.getTimeStart());
 		Date ended = new Date(shifts.getTimeEnd());
 		LocalDateTime now = LocalDateTime.now();
-		for(int i = 0; i < 60; i++) {
+		for(int i = 0; i < 56; i++) {
 			if(now.getDayOfWeek().getValue() == shifts.getDayWeek().getDayOfWeek().intValue()) {
 					LocalDateTime localStart = LocalDateTime.of(now.getYear(), now.getMonthValue(), now.getDayOfMonth(), start.getHours(), start.getMinutes());
 					LocalDateTime localEned = LocalDateTime.of(now.getYear(), now.getMonthValue(), now.getDayOfMonth(), ended.getHours(), ended.getMinutes());
@@ -95,7 +95,8 @@ public class ShiftsController {
 					model.setTimeEnd(localEned.toString());
 					model.setProfessional(shifts.getProfessional());
 					model.setDayWeek(shifts.getDayWeek());
-					list.add(model);
+					if(localEned.isAfter(LocalDateTime.now()))
+						list.add(model);
 				}
 				
 			now = now.plusDays(1);

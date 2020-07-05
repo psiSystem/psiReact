@@ -19,14 +19,14 @@ public class Specialty {
 	private String description;
 	private Long cbo;
 	@ManyToOne(fetch = FetchType.EAGER)
-	private GroupSpecialty groupSpecialty;
+	private Formation formation;
 
-	public GroupSpecialty getGroupSpecialty() {
-		return groupSpecialty;
+	public Formation getFormation() {
+		return formation;
 	}
 
-	public void setGroupSpecialty(GroupSpecialty groupSpecialty) {
-		this.groupSpecialty = groupSpecialty;
+	public void setFormation(Formation formation) {
+		this.formation = formation;
 	}
 
 	public Long getId() {

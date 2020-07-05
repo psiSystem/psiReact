@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.br.psi.model.Const;
-import com.br.psi.model.GroupSpecialty;
+import com.br.psi.model.Formation;
 import com.br.psi.model.Specialty;
 import com.br.psi.repository.SpecialtyRepository;
 
@@ -38,8 +38,8 @@ public class SpecialtyController {
 
     @Secured({Const.ROLE_CLIENT, Const.ROLE_ADMIN,Const.ROLE_PRFESSIONAL})
     @RequestMapping(value = "/specialty/findByGroupSpecialty", method = RequestMethod.POST)
-    public ResponseEntity<List<Specialty>> list(@RequestBody GroupSpecialty groupSpecialty){
-        return new ResponseEntity<List<Specialty>>(specialtyRepository.findByGroupSpecialty(groupSpecialty), HttpStatus.OK);
+    public ResponseEntity<List<Specialty>> list(@RequestBody Formation formation){
+        return new ResponseEntity<List<Specialty>>(specialtyRepository.findByFormation(formation), HttpStatus.OK);
     }
 
 

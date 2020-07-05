@@ -52,7 +52,7 @@ public class ProfessionalController {
     	List<Permission> list = new ArrayList<Permission>();
     	list.add(permissionRepository.findByName(Const.ROLE_PRFESSIONAL));
     	
-    	user = new User(professional.getPerson().getEmail(), passwordEncoder.encode(professional.getPassword()), list);
+    	user = new User(professional.getPerson().getEmail(), passwordEncoder.encode(professional.getPerson().getCpf().replace(".", "").replace("-", "")), list);
     	user.setEnable(Boolean.TRUE);
     	user.setPerson(professional.getPerson());
     	

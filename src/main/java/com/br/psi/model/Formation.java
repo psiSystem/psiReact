@@ -7,7 +7,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity
-public class GroupSpecialty {
+public class Formation {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

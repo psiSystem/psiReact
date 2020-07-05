@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import com.br.psi.model.Client;
 import com.br.psi.model.DayWeek;
-import com.br.psi.model.GroupSpecialty;
+import com.br.psi.model.Formation;
 import com.br.psi.model.OfficeRoom;
 import com.br.psi.model.Shifts;
 
@@ -17,7 +17,7 @@ public interface ShiftsRepository extends JpaRepository<Shifts, String> {
 
 	List<Shifts> findByDayWeekOfficeRoom(OfficeRoom officeRoom);
 
-	List<Shifts> findByProfessionalSpecialtyGroupSpecialty(GroupSpecialty groupSpecialty);
+	List<Shifts> findByProfessionalFormation(Formation formation);
 	
 	
 }

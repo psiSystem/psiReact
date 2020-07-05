@@ -17,6 +17,7 @@ public class Schedule {
 	private Long id;
 	private Date dateStart;
 	private Date dateEnd;
+	private Integer dayOfWeek;
 	@ManyToOne(fetch = FetchType.EAGER)
 	private Patient patient;
 	@ManyToOne(fetch = FetchType.EAGER)
@@ -70,6 +71,14 @@ public class Schedule {
 
 	public void setKind(Kind kind) {
 		this.kind = kind;
+	}
+
+	public Integer getDayOfWeek() {
+		return dayOfWeek;
+	}
+
+	public void setDayOfWeek(Integer dayOfWeek) {
+		this.dayOfWeek = dayOfWeek;
 	}
 	
 	

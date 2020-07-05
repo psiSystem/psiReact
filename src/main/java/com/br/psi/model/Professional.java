@@ -1,11 +1,16 @@
 package com.br.psi.model;
 
+import java.util.List;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Transient;
@@ -25,9 +30,10 @@ public class Professional {
 	private Long registerProfessional;
 	@Valid
 	@ManyToOne(fetch = FetchType.EAGER)
-	private Specialty specialty;
-	@Transient
-	private String password;
+	private Formation formation;
+	@ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name="formation_specialty", joinColumns = @JoinColumn(name="professional_id"), inverseJoinColumns = @JoinColumn(name="specialty_id"))
+    private List<Specialty> specialtys;
 	
 	public Long getId() {
 		return id;
@@ -53,21 +59,20 @@ public class Professional {
 		this.registerProfessional = registerProfessional;
 	}
 
-	public Specialty getSpecialty() {
-		return specialty;
+	public Formation getFormation() {
+		return formation;
 	}
 
-	public void setSpecialty(Specialty specialty) {
-		this.specialty = specialty;
+	public void setFormation(Formation formation) {
+		this.formation = formation;
 	}
 
-	public String getPassword() {
-		return password;
+	public List<Specialty> getSpecialtys() {
+		return specialtys;
 	}
 
-	public void setPassword(String password) {
-		this.password = password;
+	public void setSpecialtys(List<Specialty> specialtys) {
+		this.specialtys = specialtys;
 	}
-
 	
 }
