@@ -11,7 +11,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 
 @Entity
 public class Patient {
@@ -23,9 +22,6 @@ public class Patient {
 	private Person person;
 	@ManyToOne(fetch = FetchType.EAGER)
 	private CameClinic cameClinic;
-	@Valid
-	@ManyToOne(fetch = FetchType.EAGER)
-	private PlanHeath planHeath;
 	@NotBlank(message = "{campo.obrigatorio}")
 	@Column(nullable = false)
 	private String emergencialPhone;
@@ -58,14 +54,6 @@ public class Patient {
 
 	public void setCameClinic(CameClinic cameClinic) {
 		this.cameClinic = cameClinic;
-	}
-
-	public PlanHeath getPlanHeath() {
-		return planHeath;
-	}
-
-	public void setPlanHeath(PlanHeath planHeath) {
-		this.planHeath = planHeath;
 	}
 
 	public String getEmergencialPhone() {

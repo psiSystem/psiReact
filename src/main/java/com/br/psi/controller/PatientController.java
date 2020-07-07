@@ -60,7 +60,7 @@ public class PatientController {
     	List<Permission> list = new ArrayList<Permission>();
     	list.add(permissionRepository.findByName(Const.ROLE_PATIENT));
     	
-    	user = new User(patient.getPerson().getEmail(), passwordEncoder.encode(patient.getPassword()), list);
+    	user = new User(patient.getPerson().getEmail(), passwordEncoder.encode(patient.getPerson().getCpf().replace(".", "").replace("-", "")), list);
     	user.setEnable(Boolean.TRUE);
     	user.setPerson(patient.getPerson());
     	

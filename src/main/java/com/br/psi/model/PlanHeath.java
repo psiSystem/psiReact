@@ -9,7 +9,6 @@ import javax.validation.constraints.NotNull;
 
 @Entity
 public class PlanHeath {
-	@NotNull(message = "{campo.obrigatorio}")
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;

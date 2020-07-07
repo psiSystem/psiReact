@@ -2,10 +2,12 @@ package com.br.psi.model;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.validation.Valid;
 
 @Entity
 public class PaymentPatient {
@@ -15,10 +17,13 @@ public class PaymentPatient {
 	private Long id;
 	private String rg;
 	private String cpf;
-	@ManyToOne(cascade = CascadeType.PERSIST)
+	@ManyToOne(fetch = FetchType.EAGER)
 	private Payment payment;
-	@ManyToOne(cascade = CascadeType.PERSIST)
+	@ManyToOne(fetch = FetchType.EAGER)
 	private Patient patient;
+	@ManyToOne(fetch = FetchType.EAGER)
+	private PlanHeath planHeath;
+	private Double value;
 
 	public Long getId() {
 		return id;
@@ -60,4 +65,21 @@ public class PaymentPatient {
 		this.patient = patient;
 	}
 
+	public PlanHeath getPlanHeath() {
+		return planHeath;
+	}
+
+	public void setPlanHeath(PlanHeath planHeath) {
+		this.planHeath = planHeath;
+	}
+
+	public Double getValue() {
+		return value;
+	}
+
+	public void setValue(Double value) {
+		this.value = value;
+	}
+
+	
 }
