@@ -63,7 +63,7 @@ public class ProfessionalController {
 
     @Secured({Const.ROLE_ADMIN})
     @RequestMapping(value = "/professional/edit", method = RequestMethod.PUT)
-    public ResponseEntity<Professional> edit(@RequestBody @Valid Professional professional){
+    public ResponseEntity<Professional> edit(@RequestBody Professional professional){
         this.professionalRepository.save(professional);
         return new ResponseEntity<Professional>(professional, HttpStatus.CREATED);
     }

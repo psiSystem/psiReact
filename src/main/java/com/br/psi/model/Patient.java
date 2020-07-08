@@ -25,13 +25,7 @@ public class Patient {
 	@NotBlank(message = "{campo.obrigatorio}")
 	@Column(nullable = false)
 	private String emergencialPhone;
-	@NotBlank(message = "{campo.obrigatorio}")
-	@Column(nullable = false)
-	private String numberPlanHealth;
 	
-	@Transient
-	private String password;
-
 	public Long getId() {
 		return id;
 	}
@@ -64,21 +58,4 @@ public class Patient {
 		this.emergencialPhone = emergencialPhone;
 	}
 
-	public String getNumberPlanHealth() {
-		return numberPlanHealth;
-	}
-
-	public void setNumberPlanHealth(String numberPlanHealth) {
-		this.numberPlanHealth = numberPlanHealth;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	
 }

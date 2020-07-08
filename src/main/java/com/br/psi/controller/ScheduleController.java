@@ -1,15 +1,8 @@
 package com.br.psi.controller;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,7 +14,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.br.psi.model.Const;
+import com.br.psi.model.PaymentPatient;
 import com.br.psi.model.Schedule;
+import com.br.psi.repository.PaymentPatientRepository;
 import com.br.psi.repository.ScheduleRepository;
 
 @RestController
@@ -30,13 +25,15 @@ public class ScheduleController {
 
     @Autowired
     private ScheduleRepository scheduleRepository;
-
+    @Autowired
+    private PaymentPatientRepository paymentPatientRepository;
+    
     @Secured({Const.ROLE_ADMIN})
     @RequestMapping(value = "/schedule/save", method = RequestMethod.POST)
-    public ResponseEntity<List<Schedule>> save(@RequestBody List<Schedule> listSchedule) throws ParseException{
+    public ResponseEntity<List<Schedule>> save(@RequestBody List<Schedule> listSchedule) throws Exception{
     	for (Schedule schedule : listSchedule) {
     		if(schedule.getProfessional() != null && schedule.getKind() != null) {
-    				List<Schedule> list = scheduleRepository.findByProfessionalAndDayOfWeekAndPatient(schedule.getProfessional(),schedule.getDayOfWeek(),schedule.getPatient());
+    				List<Schedule> list = scheduleRepository.findByProfessionalAndDayOfWeekAndPatientAndDateStartAndKind(schedule.getProfessional(),schedule.getDayOfWeek(),schedule.getPatient(),new Date(),schedule.getKind());
     				proccessKindSchedule(schedule,list);
     		}
 		}
@@ -45,7 +42,7 @@ public class ScheduleController {
     }
 
 
-	private void proccessKindSchedule(Schedule schedule, List<Schedule> listSch) throws ParseException {
+	private void proccessKindSchedule(Schedule schedule, List<Schedule> listSch) throws Exception {
 			switch (schedule.getKind().getAmountDay()) {
 			case 0:
 				createUnique(schedule,listSch);
@@ -65,9 +62,20 @@ public class ScheduleController {
 		
 	}
 
-	private void creatList(Schedule schedule, List<Schedule> list) {
-			list.add(schedule);
-			for (int i = 1; i <= schedule.getKind().getAmountMultiple() ; i++) {
+	private void creatList(Schedule schedule, List<Schedule> list) throws Exception {
+		List<PaymentPatient> paymentPatients = paymentPatientRepository.findByPatient(schedule.getPatient());
+		for (PaymentPatient paymentPatient : paymentPatients) {
+			
+			Integer amountMultiple = schedule.getKind().getAmountMultiple();
+			schedule.setPaymentPatient(paymentPatient);
+				if(paymentPatient.getAmount() != null) {
+					List<Schedule> findByPaymentPatient = scheduleRepository.findByPaymentPatient(paymentPatient);
+					amountMultiple = paymentPatient.getAmount() - findByPaymentPatient.size() - 1;
+				}
+			
+			if(amountMultiple > 0) {
+				list.add(schedule);
+			for (int i = 1; i <= amountMultiple ; i++) {
 				Date dateStart = new Date(schedule.getDateStart().getTime());
 				Date dateEnd = new Date(schedule.getDateEnd().getTime());
 				Schedule model = new Schedule();
@@ -79,41 +87,42 @@ public class ScheduleController {
 				model.setDateStart(dateStart);
 				model.setDateEnd(dateEnd);
 				model.setDayOfWeek(schedule.getDayOfWeek());
+				model.setPaymentPatient(paymentPatient);
 				list.add(model);
 			}
 		
-		
+			}else {
+				throw new Exception("Paciente não possui créditos disponível.");
+			}
+		}
 	}
 
-	private void createMonth(Schedule schedule, List<Schedule> list) {
-		if(!list.isEmpty())
-			deleteList(list);
-		
+	private void createMonth(Schedule schedule, List<Schedule> list) throws Exception {
 		creatList(schedule,list);
 		this.scheduleRepository.saveAll(list);
 	}
 
-	private void createBiweekly(Schedule schedule, List<Schedule> list) {
-		if(!list.isEmpty())
-			deleteList(list);
-		
+	private void createBiweekly(Schedule schedule, List<Schedule> list) throws Exception {
 		creatList(schedule,list);
 		this.scheduleRepository.saveAll(list);
 		
 	}
 
-	private void createWeek(Schedule schedule, List<Schedule> list) {
-		if(!list.isEmpty())
-			deleteList(list);
-		
+	private void createWeek(Schedule schedule, List<Schedule> list) throws Exception {
 		creatList(schedule,list);
 		this.scheduleRepository.saveAll(list);		
 	}
 
-	private void createUnique(Schedule schedule, List<Schedule> list) {
-		if(!list.isEmpty())
-			deleteList(list);
-		this.scheduleRepository.save(schedule);
+	private void createUnique(Schedule schedule, List<Schedule> list) throws Exception {
+		List<PaymentPatient> paymentPatients = paymentPatientRepository.findByPatient(schedule.getPatient());
+		for (PaymentPatient paymentPatient : paymentPatients) {
+			List<Schedule> findByPaymentPatient = scheduleRepository.findByPaymentPatient(paymentPatient);
+				if(findByPaymentPatient.size() < paymentPatient.getAmount()) {
+					this.scheduleRepository.save(schedule);
+					return;
+				}
+		}
+		throw new Exception("Paciente não possui créditos disponível.");
 	}
 
 
@@ -140,7 +149,7 @@ public class ScheduleController {
     @RequestMapping(value = "/schedule/releaseSchedule", method = RequestMethod.POST)
     public ResponseEntity releaseSchedule(@RequestBody Schedule schedule){
 		schedule = scheduleRepository.findById(schedule.getId());
-		List<Schedule> list = scheduleRepository.findByProfessionalAndDayOfWeekAndPatient(schedule.getProfessional(),schedule.getDayOfWeek(),schedule.getPatient());
+		List<Schedule> list = scheduleRepository.findByProfessionalAndDayOfWeekAndPatientAndDateStartAndKind(schedule.getProfessional(),schedule.getDayOfWeek(),schedule.getPatient(), new Date(),schedule.getKind());
         this.scheduleRepository.deleteAll(list);
         return new ResponseEntity<>( HttpStatus.OK);
     }

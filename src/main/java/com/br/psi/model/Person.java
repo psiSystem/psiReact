@@ -19,6 +19,11 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.validator.constraints.UniqueElements;
+
+import com.br.psi.validation.UniqueCpf;
+import com.br.psi.validation.UniqueEmail;
+
 @Entity
 public class Person {
 	@Id
@@ -35,9 +40,11 @@ public class Person {
 	private Date bornDate;
 	@NotBlank(message = "{campo.obrigatorio}")
 	@Email
-	@Column(nullable = false)
+	@Column(nullable = false, unique = true)
+	@UniqueEmail(message = "{email.cadastrado}")
 	private String email;
 	@NotBlank(message = "{campo.obrigatorio}")
+	@UniqueCpf(message = "{cpf.cadastrado}")
 	@Column(nullable = false, unique = true)
 	private String cpf;
 	@Column(nullable = false)

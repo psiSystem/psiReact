@@ -8,6 +8,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 
 @Entity
 public class PaymentPatient {
@@ -15,14 +16,21 @@ public class PaymentPatient {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+	@NotBlank(message = "{campo.obrigatorio}")
 	private String rg;
+	@NotBlank(message = "{campo.obrigatorio}")
 	private String cpf;
+	@NotBlank(message = "{campo.obrigatorio}")
+	private String name;
+	private String numberPlan;
+	private Integer amount;
 	@ManyToOne(fetch = FetchType.EAGER)
 	private Payment payment;
-	@ManyToOne(fetch = FetchType.EAGER)
+	@Valid
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private Patient patient;
 	@ManyToOne(fetch = FetchType.EAGER)
-	private PlanHeath planHeath;
+	private PlanHeath planHealth;
 	private Double value;
 
 	public Long getId() {
@@ -65,12 +73,12 @@ public class PaymentPatient {
 		this.patient = patient;
 	}
 
-	public PlanHeath getPlanHeath() {
-		return planHeath;
+	public PlanHeath getPlanHealth() {
+		return planHealth;
 	}
 
-	public void setPlanHeath(PlanHeath planHeath) {
-		this.planHeath = planHeath;
+	public void setPlanHealth(PlanHeath planHealth) {
+		this.planHealth = planHealth;
 	}
 
 	public Double getValue() {
@@ -81,5 +89,28 @@ public class PaymentPatient {
 		this.value = value;
 	}
 
-	
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getNumberPlan() {
+		return numberPlan;
+	}
+
+	public void setNumberPlan(String numberPlan) {
+		this.numberPlan = numberPlan;
+	}
+
+	public Integer getAmount() {
+		return amount;
+	}
+
+	public void setAmount(Integer amount) {
+		this.amount = amount;
+	}
+
 }
