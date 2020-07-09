@@ -32,7 +32,7 @@ public class ScheduleController {
     @RequestMapping(value = "/schedule/save", method = RequestMethod.POST)
     public ResponseEntity<List<Schedule>> save(@RequestBody List<Schedule> listSchedule) throws Exception{
     	for (Schedule schedule : listSchedule) {
-    		if(schedule.getProfessional() != null && schedule.getKind() != null) {
+    		if(schedule.getId() == null && schedule.getProfessional() != null && schedule.getKind() != null) {
     				List<Schedule> list = scheduleRepository.findByProfessionalAndDayOfWeekAndPatientAndDateStartAndKind(schedule.getProfessional(),schedule.getDayOfWeek(),schedule.getPatient(),new Date(),schedule.getKind());
     				proccessKindSchedule(schedule,list);
     		}
