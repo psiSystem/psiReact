@@ -8,14 +8,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.br.psi.model.Const;
+import com.br.psi.model.Patient;
 import com.br.psi.model.PaymentPatient;
+import com.br.psi.model.Professional;
 import com.br.psi.model.Schedule;
+import com.br.psi.model.User;
 import com.br.psi.repository.PaymentPatientRepository;
 import com.br.psi.repository.ScheduleRepository;
 
@@ -114,6 +118,7 @@ public class ScheduleController {
 	}
 
 	private void createUnique(Schedule schedule, List<Schedule> list) throws Exception {
+		//alterar metodo para validar status de pagamentos validos.
 		List<PaymentPatient> paymentPatients = paymentPatientRepository.findByPatient(schedule.getPatient());
 		for (PaymentPatient paymentPatient : paymentPatients) {
 			List<Schedule> findByPaymentPatient = scheduleRepository.findByPaymentPatient(paymentPatient);
@@ -217,5 +222,13 @@ public class ScheduleController {
 		return listSchedule;
 	}
 
+	
+	@Secured({Const.ROLE_CLIENT, Const.ROLE_ADMIN,Const.ROLE_PRFESSIONAL})
+	@RequestMapping(value = "/schedule/findAllByprofessional", method = RequestMethod.POST)
+	public ResponseEntity<List<Schedule>> findAllByprofessional(@RequestBody Professional professional){
+		User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+	        
+	    return new ResponseEntity<List<Schedule>>(scheduleRepository.findByProfessionalId(professional.getId()), HttpStatus.OK);
+	}
 
 }
