@@ -1,5 +1,7 @@
 package com.br.psi.controller;
-import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
@@ -15,13 +17,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.br.psi.model.Const;
-import com.br.psi.model.Patient;
 import com.br.psi.model.PaymentPatient;
 import com.br.psi.model.Professional;
 import com.br.psi.model.Schedule;
+import com.br.psi.model.Shifts;
 import com.br.psi.model.User;
 import com.br.psi.repository.PaymentPatientRepository;
 import com.br.psi.repository.ScheduleRepository;
+import com.br.psi.repository.ShiftsRepository;
 
 @RestController
 @RequestMapping("/api")
@@ -31,6 +34,9 @@ public class ScheduleController {
     private ScheduleRepository scheduleRepository;
     @Autowired
     private PaymentPatientRepository paymentPatientRepository;
+    @Autowired
+    private ShiftsRepository shiftsRepository;
+    
     
     @Secured({Const.ROLE_ADMIN})
     @RequestMapping(value = "/schedule/save", method = RequestMethod.POST)
@@ -122,7 +128,7 @@ public class ScheduleController {
 		List<PaymentPatient> paymentPatients = paymentPatientRepository.findByPatient(schedule.getPatient());
 		for (PaymentPatient paymentPatient : paymentPatients) {
 			List<Schedule> findByPaymentPatient = scheduleRepository.findByPaymentPatient(paymentPatient);
-				if(findByPaymentPatient.size() < paymentPatient.getAmount()) {
+				if(paymentPatient.getAmount() == null || findByPaymentPatient.size() < paymentPatient.getAmount()) {
 					this.scheduleRepository.save(schedule);
 					return;
 				}
@@ -187,11 +193,9 @@ public class ScheduleController {
 			model.setProfessional(schedule.getProfessional());
 			model.setDayOfWeek(dateStart.getDay());
 			for (Schedule schedule2 : list) {
-				if(schedule2.getDateStart().compareTo(model.getDateStart()) == 0){
+				if(schedule2.getDateStart().compareTo(model.getDateStart()) == 0 || (model.getDateStart().before(schedule2.getDateEnd()) && model.getDateStart().after(schedule2.getDateStart()))){
 					model = null;
-				}
-				if(dateStart.before(schedule2.getDateEnd())) {
-					dateEnd = schedule2.getDateEnd();
+					break;
 				}
 			}
 			
@@ -227,8 +231,60 @@ public class ScheduleController {
 	@RequestMapping(value = "/schedule/findAllByprofessional", method = RequestMethod.POST)
 	public ResponseEntity<List<Schedule>> findAllByprofessional(@RequestBody Professional professional){
 		User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-	        
-	    return new ResponseEntity<List<Schedule>>(scheduleRepository.findByProfessionalId(professional.getId()), HttpStatus.OK);
+		List<Schedule> list = scheduleRepository.findByProfessionalIdAndDateStart(professional.getId(), new Date());
+			list = createListSchedule(list,professional);       
+	    return new ResponseEntity<List<Schedule>>(list, HttpStatus.OK);
+	}
+
+
+	private List<Schedule> createListSchedule(List<Schedule> list, Professional professional) {
+		List<Shifts> shifts = shiftsRepository.findByProfessionalId(professional.getId());
+		
+		List<Schedule> listSchedule = list;
+		SimpleDateFormat format = new SimpleDateFormat();
+		for (Shifts shift : shifts) {
+			LocalDateTime now = LocalDateTime.now();
+			for(int i = 0; i < 56; i++) {
+				Date start = new Date(shift.getTimeStart());
+				Date ended = new Date(shift.getTimeEnd());
+				int timeSession = 30;
+				long st = start.getTime();
+				long end = ended.getTime();
+				long interval = end - st;
+				long amoutPosibled = (interval /1000 / 60) / timeSession;
+				if(now.getDayOfWeek().getValue() == shift.getDayWeek().getDayOfWeek().intValue()) {
+					for (int j = 0; j < amoutPosibled; j++) {
+						LocalDateTime localStart = LocalDateTime.of(now.getYear(), now.getMonthValue(), now.getDayOfMonth(), start.getHours(), start.getMinutes());
+						LocalDateTime localEned = localStart.plusMinutes(timeSession);
+						Schedule model = new Schedule();
+						model.setDateStart(Date.from(localStart.atZone(ZoneId.systemDefault()).toInstant()));
+						model.setDateEnd(Date.from(localEned.atZone(ZoneId.systemDefault()).toInstant()));
+						model.setProfessional(shift.getProfessional());
+						model.setDayOfWeek(shift.getDayWeek().getDayOfWeek());
+						for (Schedule schedule : list) {
+								if(schedule.getDayOfWeek().equals(model.getDayOfWeek()) && (schedule.getDateStart().compareTo(model.getDateStart()) == 0 || model.getDateEnd().before(ended) || (model.getDateStart().before(schedule.getDateEnd()) && model.getDateStart().after(schedule.getDateStart()))) ) {
+									model = null;
+									break;
+								}
+								
+						}
+						if(model != null)
+							listSchedule.add(model);
+						
+						if(localEned.getHour() > ended.getHours()) {
+							break;
+						}
+						
+						start = Date.from(localEned.atZone(ZoneId.systemDefault()).toInstant());
+					}
+					
+				}
+					
+				now = now.plusDays(1);
+			}
+		}
+		
+		return listSchedule;
 	}
 
 }
