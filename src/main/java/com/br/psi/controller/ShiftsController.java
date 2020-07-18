@@ -35,14 +35,14 @@ public class ShiftsController {
     private ShiftsRepository shiftsRepository;
     private List<Shifts> list ;
     
-    @Secured({Const.ROLE_ADMIN})
+    @Secured({Const.ROLE_ADMIN,Const.ROLE_CLIENT})
     @RequestMapping(value = "/shift/save", method = RequestMethod.POST)
     public ResponseEntity<Shifts> save(@RequestBody Shifts shift){
     	 this.shiftsRepository.save(shift);
         return new ResponseEntity<Shifts>(shift, HttpStatus.OK);
     }
 
-    @Secured({Const.ROLE_ADMIN})
+    @Secured({Const.ROLE_ADMIN,Const.ROLE_CLIENT})
     @RequestMapping(value = "/shift/edit", method = RequestMethod.PUT)
     public ResponseEntity<List<Shifts>>  edit(@RequestBody List<Shifts> listShift){
     	

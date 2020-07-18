@@ -1,8 +1,5 @@
 package com.br.psi.model;
 
-import lombok.AllArgsConstructor;
-
-@AllArgsConstructor
 public class ObjectError {
 
 	private String message;
@@ -13,6 +10,10 @@ public class ObjectError {
 		this.message = message;
 		this.field = field;
 		this.parameter = parameter;
+	}
+
+	public ObjectError() {
+		// TODO Auto-generated constructor stub
 	}
 
 	public String getMessage() {

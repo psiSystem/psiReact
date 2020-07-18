@@ -1,19 +1,18 @@
 package com.br.psi.model;
 
-import lombok.AllArgsConstructor;
 
 import java.util.List;
 
-@AllArgsConstructor
+
 public class ErrorResponse {
 
 	private String message;
 	private int code;
 	private String status;
 	private String objectName;
-	private List<ObjectError> errors;
+	private List<Object> errors;
 
-	public ErrorResponse(String message, int code, String status, String objectName, List<ObjectError> errors) {
+	public ErrorResponse(String message, int code, String status, String objectName, List<Object> errors) {
 		super();
 		this.message = message;
 		this.code = code;
@@ -54,11 +53,11 @@ public class ErrorResponse {
 		this.objectName = objectName;
 	}
 
-	public List<ObjectError> getErrors() {
+	public List<Object> getErrors() {
 		return errors;
 	}
 
-	public void setErrors(List<ObjectError> errors) {
+	public void setErrors(List<Object> errors) {
 		this.errors = errors;
 	}
 

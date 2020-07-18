@@ -23,6 +23,7 @@ import com.br.psi.model.Schedule;
 import com.br.psi.model.Shifts;
 import com.br.psi.model.User;
 import com.br.psi.repository.PaymentPatientRepository;
+import com.br.psi.repository.ProfessionalRepository;
 import com.br.psi.repository.ScheduleRepository;
 import com.br.psi.repository.ShiftsRepository;
 
@@ -36,9 +37,11 @@ public class ScheduleController {
     private PaymentPatientRepository paymentPatientRepository;
     @Autowired
     private ShiftsRepository shiftsRepository;
+    @Autowired
+    private ProfessionalRepository professionalRepository;
     
     
-    @Secured({Const.ROLE_ADMIN})
+    @Secured({Const.ROLE_ADMIN,Const.ROLE_PRFESSIONAL,Const.ROLE_CLIENT})
     @RequestMapping(value = "/schedule/save", method = RequestMethod.POST)
     public ResponseEntity<List<Schedule>> save(@RequestBody List<Schedule> listSchedule) throws Exception{
     	for (Schedule schedule : listSchedule) {
@@ -143,20 +146,20 @@ public class ScheduleController {
 	}
 
 
-	@Secured({Const.ROLE_ADMIN})
+	@Secured({Const.ROLE_ADMIN,Const.ROLE_PRFESSIONAL,Const.ROLE_CLIENT})
     @RequestMapping(value = "/schedule/edit", method = RequestMethod.PUT)
     public ResponseEntity<Schedule> edit(@RequestBody Schedule schedule){
         this.scheduleRepository.save(schedule);
         return new ResponseEntity<Schedule>(schedule, HttpStatus.OK);
     }
 	
-	@Secured({Const.ROLE_ADMIN})
+	@Secured({Const.ROLE_ADMIN,Const.ROLE_PRFESSIONAL,Const.ROLE_CLIENT})
     @RequestMapping(value = "/schedule/delete", method = RequestMethod.POST)
     public ResponseEntity delete(@RequestBody Schedule schedule){
         this.scheduleRepository.delete(schedule);
         return new ResponseEntity<>( HttpStatus.OK);
     }
-	@Secured({Const.ROLE_ADMIN})
+	@Secured({Const.ROLE_ADMIN,Const.ROLE_PRFESSIONAL,Const.ROLE_CLIENT})
     @RequestMapping(value = "/schedule/releaseSchedule", method = RequestMethod.POST)
     public ResponseEntity releaseSchedule(@RequestBody Schedule schedule){
 		schedule = scheduleRepository.findById(schedule.getId());
@@ -166,7 +169,7 @@ public class ScheduleController {
     }
 	
 
-    @Secured({Const.ROLE_CLIENT, Const.ROLE_ADMIN,Const.ROLE_PRFESSIONAL})
+    @Secured({Const.ROLE_CLIENT, Const.ROLE_ADMIN})
     @RequestMapping(value = "/schedule/findByProfession", method = RequestMethod.POST)
     public ResponseEntity<List<Schedule>> list(@RequestBody Schedule schedule){
     	List<Schedule> list = scheduleRepository.findByProfessionalAndDateStartAndDateEnd(schedule.getProfessional(),schedule.getDateStart(),schedule.getDateEnd());
@@ -227,10 +230,12 @@ public class ScheduleController {
 	}
 
 	
-	@Secured({Const.ROLE_CLIENT, Const.ROLE_ADMIN,Const.ROLE_PRFESSIONAL})
-	@RequestMapping(value = "/schedule/findAllByprofessional", method = RequestMethod.POST)
-	public ResponseEntity<List<Schedule>> findAllByprofessional(@RequestBody Professional professional){
+	@Secured({Const.ROLE_ADMIN,Const.ROLE_PRFESSIONAL})
+	@RequestMapping(value = "/schedule/findAllByprofessional", method = RequestMethod.GET)
+	public ResponseEntity<List<Schedule>> findAllByprofessional(){
 		User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+	    Professional professional = professionalRepository.findByPerson(user.getPerson());
+		 
 		List<Schedule> list = scheduleRepository.findByProfessionalIdAndDateStart(professional.getId(), new Date());
 			list = createListSchedule(list,professional);       
 	    return new ResponseEntity<List<Schedule>>(list, HttpStatus.OK);
