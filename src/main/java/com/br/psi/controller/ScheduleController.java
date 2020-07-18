@@ -132,6 +132,7 @@ public class ScheduleController {
 		for (PaymentPatient paymentPatient : paymentPatients) {
 			List<Schedule> findByPaymentPatient = scheduleRepository.findByPaymentPatient(paymentPatient);
 				if(paymentPatient.getAmount() == null || findByPaymentPatient.size() < paymentPatient.getAmount()) {
+					schedule.setPaymentPatient(paymentPatient);
 					this.scheduleRepository.save(schedule);
 					return;
 				}
