@@ -34,6 +34,8 @@ public class Professional {
 	@ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name="formation_specialty", joinColumns = @JoinColumn(name="professional_id"), inverseJoinColumns = @JoinColumn(name="specialty_id"))
     private List<Specialty> specialtys;
+	@ManyToOne(fetch = FetchType.EAGER)
+	private Status status;
 	
 	public Long getId() {
 		return id;
@@ -74,5 +76,14 @@ public class Professional {
 	public void setSpecialtys(List<Specialty> specialtys) {
 		this.specialtys = specialtys;
 	}
+
+	public Status getStatus() {
+		return status;
+	}
+
+	public void setStatus(Status status) {
+		this.status = status;
+	}
+	
 	
 }

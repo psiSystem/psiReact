@@ -24,6 +24,7 @@ public class PaymentPatient {
 	private String name;
 	private String numberPlan;
 	private Integer amount;
+	@Valid
 	@ManyToOne(fetch = FetchType.EAGER)
 	private Payment payment;
 	@Valid

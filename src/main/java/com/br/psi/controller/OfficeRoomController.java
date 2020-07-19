@@ -5,6 +5,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,7 +39,7 @@ public class OfficeRoomController {
     
     @Secured({Const.ROLE_ADMIN})
     @RequestMapping(value = "/officeRoom/save", method = RequestMethod.POST)
-    public ResponseEntity<OfficeRoom> save(@RequestBody OfficeRoom officeRoom){
+    public ResponseEntity<OfficeRoom> save(@Valid @RequestBody OfficeRoom officeRoom){
     	User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     	
     	officeRoom.setClient(user.getPerson().getClient());

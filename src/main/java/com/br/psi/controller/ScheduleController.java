@@ -2,6 +2,7 @@ package com.br.psi.controller;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
@@ -43,15 +44,19 @@ public class ScheduleController {
     
     @Secured({Const.ROLE_ADMIN,Const.ROLE_PRFESSIONAL,Const.ROLE_CLIENT})
     @RequestMapping(value = "/schedule/save", method = RequestMethod.POST)
-    public ResponseEntity<List<Schedule>> save(@RequestBody List<Schedule> listSchedule) throws Exception{
+    public ResponseEntity<Object> save(@RequestBody List<Schedule> listSchedule) {
     	for (Schedule schedule : listSchedule) {
     		if(schedule.getId() == null && schedule.getProfessional() != null && schedule.getKind() != null) {
     				List<Schedule> list = scheduleRepository.findByProfessionalAndDayOfWeekAndPatientAndDateStartAndKind(schedule.getProfessional(),schedule.getDayOfWeek(),schedule.getPatient(),new Date(),schedule.getKind());
-    				proccessKindSchedule(schedule,list);
+    				try {
+						proccessKindSchedule(schedule,list);
+					} catch (Exception e) {
+						return new ResponseEntity<Object>(e.getMessage(), HttpStatus.EXPECTATION_FAILED);				
+					}
     		}
 		}
     	 
-        return new ResponseEntity<List<Schedule>>(listSchedule, HttpStatus.OK);
+        return new ResponseEntity<Object>(listSchedule, HttpStatus.OK);
     }
 
 
@@ -105,7 +110,7 @@ public class ScheduleController {
 			}
 		
 			}else {
-				throw new Exception("Paciente não possui créditos disponível.");
+				throw new Exception("Paciente "+schedule.getPatient().getPerson().getName()+" não possui créditos disponível.");
 			}
 		}
 	}
@@ -137,7 +142,8 @@ public class ScheduleController {
 					return;
 				}
 		}
-		throw new Exception("Paciente não possui créditos disponível.");
+		throw new Exception("Paciente "+schedule.getPatient().getPerson().getName()+" não possui créditos disponível.");
+		
 	}
 
 
@@ -173,7 +179,12 @@ public class ScheduleController {
     @Secured({Const.ROLE_CLIENT, Const.ROLE_ADMIN})
     @RequestMapping(value = "/schedule/findByProfession", method = RequestMethod.POST)
     public ResponseEntity<List<Schedule>> list(@RequestBody Schedule schedule){
-    	List<Schedule> list = scheduleRepository.findByProfessionalAndDateStartAndDateEnd(schedule.getProfessional(),schedule.getDateStart(),schedule.getDateEnd());
+    	List<Schedule> list = new ArrayList<Schedule>();
+    	if(schedule.getProfessional().getId() != null) {
+    		list = scheduleRepository.findByProfessionalAndDateStartAndDateEnd(schedule.getProfessional(),schedule.getDateStart(),schedule.getDateEnd());
+    	}else {
+    		list = scheduleRepository.findByDateStartAndDateEnd(schedule.getDateStart(),schedule.getDateEnd());
+    	}
     	list = createListSchedule(list,schedule);
     	
         return new ResponseEntity<List<Schedule>>(list, HttpStatus.OK);
@@ -186,9 +197,10 @@ public class ScheduleController {
 		long start = schedule.getDateStart().getTime();
 		long end = schedule.getDateEnd().getTime();
 		long interval = end - start;
-		long amoutPosibled = (interval /1000 / 60) / timeSession;
+//		long amoutPosibled = (interval /1000 / 60) / timeSession;
 		Date dateStart = schedule.getDateStart();
-		for (int i = 0; i < amoutPosibled; i++) {
+		Boolean cotinua = Boolean.TRUE;
+		while ( cotinua ) {
 			Schedule model = new Schedule();
 			model.setDateStart(dateStart);
 			Date dateEnd = new Date(dateStart.getTime());
@@ -204,8 +216,13 @@ public class ScheduleController {
 			}
 			
 			dateStart = dateEnd;
-			if(model != null && model.getDateStart().after(date) && !model.getDateEnd().after(new Date(end)))
+			if(model != null && model.getDateStart().after(date) && !model.getDateEnd().after(new Date(end))) {
 				listSchedule.add(model);
+				cotinua = false;
+			}
+			if(model != null && model.getDateStart().after( new Date(end))) {
+				cotinua = false;
+			}
 		}
 		
 		listSchedule.sort(new Comparator<Schedule>() {

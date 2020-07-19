@@ -23,6 +23,7 @@ import com.br.psi.model.Const;
 import com.br.psi.model.DayWeek;
 import com.br.psi.model.Formation;
 import com.br.psi.model.OfficeRoom;
+import com.br.psi.model.Professional;
 import com.br.psi.model.Shifts;
 import com.br.psi.model.User;
 import com.br.psi.repository.ShiftsRepository;
@@ -73,7 +74,11 @@ public class ShiftsController {
     public ResponseEntity<List<Shifts>> listOfficeRoomCalendar(@RequestBody Formation formation){
     	list = new ArrayList<Shifts>();
     	User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-    	List<Shifts> findByDayWeekOfficeRoom = shiftsRepository.findByProfessionalFormation(formation);
+    	List<Shifts> findByDayWeekOfficeRoom  = new ArrayList<Shifts>();
+    	if(formation.getId() != null)
+    		findByDayWeekOfficeRoom	 = shiftsRepository.findByProfessionalFormation(formation);
+    	
+    	findByDayWeekOfficeRoom.addAll(shiftsRepository.findByProfessionalIsNull());
     	
     	findByDayWeekOfficeRoom.forEach((shifts) -> {
     		getCalendar(shifts);

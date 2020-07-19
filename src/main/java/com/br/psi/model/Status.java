@@ -14,7 +14,17 @@ public class Status {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	private String decription;
+	private String description;
+
+	public Status(Long id) {
+		this.id= id;
+	}
+	
+	public Status() {
+		super();
+	}
+
+
 
 	public Long getId() {
 		return id;
@@ -24,12 +34,13 @@ public class Status {
 		this.id = id;
 	}
 
-	public String getDecription() {
-		return decription;
+	public String getDescription() {
+		return description;
 	}
 
-	public void setDecription(String decription) {
-		this.decription = decription;
+	public void setDescription(String description) {
+		this.description = description;
 	}
+
 
 }

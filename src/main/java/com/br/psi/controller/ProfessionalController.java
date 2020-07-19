@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.br.psi.model.Const;
 import com.br.psi.model.Permission;
 import com.br.psi.model.Professional;
+import com.br.psi.model.Status;
 import com.br.psi.model.User;
 import com.br.psi.repository.PermissionRepository;
 import com.br.psi.repository.ProfessionalRepository;
@@ -46,7 +47,7 @@ public class ProfessionalController {
     	User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     	
     	professional.getPerson().setClient(user.getPerson().getClient());
-    	
+    	professional.setStatus(new Status(Status.ACTIVE));
     	this.professionalRepository.save(professional);
     	
     	List<Permission> list = new ArrayList<Permission>();

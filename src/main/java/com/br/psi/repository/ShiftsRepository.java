@@ -17,9 +17,11 @@ public interface ShiftsRepository extends JpaRepository<Shifts, String> {
 	List<Shifts> findByDayWeekOfficeRoomClient(Client client);
 
 	List<Shifts> findByDayWeekOfficeRoom(OfficeRoom officeRoom);
-
+	@Query("select s from Shifts s where s.professional.formation = :formation")
 	List<Shifts> findByProfessionalFormation(Formation formation);
-
+	@Query("select s from Shifts s where s.professional.id is null")
+	List<Shifts> findByProfessionalIsNull();
+	
 	List<Shifts> findByProfessionalId(Long id);
 	
 	

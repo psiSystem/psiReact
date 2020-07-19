@@ -35,7 +35,7 @@ public class Person {
 	@Valid
 	@ManyToOne(fetch = FetchType.EAGER)
 	private Gender gender;
-	@NotNull
+	@NotNull(message = "{campo.obrigatorio}")
 	@Column(nullable = false)
 	private Date bornDate;
 	@NotBlank(message = "{campo.obrigatorio}")

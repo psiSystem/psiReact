@@ -10,6 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotBlank;
 
 @Entity
 public class OfficeRoom {
@@ -19,6 +20,7 @@ public class OfficeRoom {
 	private Long id;
 	@ManyToOne(fetch = FetchType.EAGER)
 	private Client client;
+	@NotBlank(message = "{campo.obrigatorio}")
 	private String decription;
 	@Transient 
 	private List<DayWeek> listDayWeek;
