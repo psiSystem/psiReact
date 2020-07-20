@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.br.psi.model.Const;
+import com.br.psi.model.Patient;
 import com.br.psi.model.PaymentPatient;
 import com.br.psi.model.Professional;
 import com.br.psi.model.Schedule;
@@ -177,13 +178,13 @@ public class ScheduleController {
 	
 
     @Secured({Const.ROLE_CLIENT, Const.ROLE_ADMIN})
-    @RequestMapping(value = "/schedule/findByProfession", method = RequestMethod.POST)
+    @RequestMapping(value = "/schedule/findByProfessionorOfficeRoom", method = RequestMethod.POST)
     public ResponseEntity<List<Schedule>> list(@RequestBody Schedule schedule){
     	List<Schedule> list = new ArrayList<Schedule>();
     	if(schedule.getProfessional().getId() != null) {
     		list = scheduleRepository.findByProfessionalAndDateStartAndDateEnd(schedule.getProfessional(),schedule.getDateStart(),schedule.getDateEnd());
     	}else {
-    		list = scheduleRepository.findByDateStartAndDateEnd(schedule.getDateStart(),schedule.getDateEnd());
+    		list = scheduleRepository.findByDateStartAndDateEndAndOfficeRoom(schedule.getDateStart(),schedule.getDateEnd(),schedule.getOfficeRoom());
     	}
     	list = createListSchedule(list,schedule);
     	
@@ -217,6 +218,7 @@ public class ScheduleController {
 			
 			dateStart = dateEnd;
 			if(model != null && model.getDateStart().after(date) && !model.getDateEnd().after(new Date(end))) {
+				model.setOfficeRoom(schedule.getOfficeRoom());
 				listSchedule.add(model);
 				cotinua = false;
 			}
@@ -259,7 +261,21 @@ public class ScheduleController {
 	    return new ResponseEntity<List<Schedule>>(list, HttpStatus.OK);
 	}
 
-
+	@Secured({Const.ROLE_ADMIN,Const.ROLE_PRFESSIONAL})
+	@RequestMapping(value = "/schedule/findAllByPatient", method = RequestMethod.POST)
+	public ResponseEntity<List<Schedule>> findAllByPatient(@RequestBody Patient patient){
+		User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		List<Schedule> list = new ArrayList<Schedule>();
+		if(patient.getId() != null) {
+			list = scheduleRepository.findByPatientDateStart(patient, new Date());
+		 }else {
+			 list = scheduleRepository.findByProfessionalPersonClientAndDateStart(user.getPerson().getClient(), new Date()); 
+		 }
+		
+	
+		return new ResponseEntity<List<Schedule>>(list, HttpStatus.OK);
+	}
+	
 	private List<Schedule> createListSchedule(List<Schedule> list, Professional professional) {
 		List<Shifts> shifts = shiftsRepository.findByProfessionalId(professional.getId());
 		

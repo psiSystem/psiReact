@@ -26,6 +26,8 @@ public class Schedule {
 	private Kind kind;
 	@ManyToOne(fetch = FetchType.EAGER)
 	private PaymentPatient paymentPatient;
+	@ManyToOne(fetch = FetchType.EAGER)
+	private OfficeRoom officeRoom;
 
 	public Long getId() {
 		return id;
@@ -89,6 +91,14 @@ public class Schedule {
 
 	public void setPaymentPatient(PaymentPatient paymentPatient) {
 		this.paymentPatient = paymentPatient;
+	}
+
+	public OfficeRoom getOfficeRoom() {
+		return officeRoom;
+	}
+
+	public void setOfficeRoom(OfficeRoom officeRoom) {
+		this.officeRoom = officeRoom;
 	}
 
 }

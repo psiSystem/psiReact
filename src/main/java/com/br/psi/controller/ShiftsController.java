@@ -75,10 +75,13 @@ public class ShiftsController {
     	list = new ArrayList<Shifts>();
     	User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     	List<Shifts> findByDayWeekOfficeRoom  = new ArrayList<Shifts>();
-    	if(formation.getId() != null)
+    	if(formation.getId() != null) {
     		findByDayWeekOfficeRoom	 = shiftsRepository.findByProfessionalFormation(formation);
+    		findByDayWeekOfficeRoom.addAll(shiftsRepository.findByProfessionalIsNull());
+    	}else {
+    		findByDayWeekOfficeRoom = shiftsRepository.findAllByDayWeekOfficeRoomClient(user.getPerson().getClient());
+    	}
     	
-    	findByDayWeekOfficeRoom.addAll(shiftsRepository.findByProfessionalIsNull());
     	
     	findByDayWeekOfficeRoom.forEach((shifts) -> {
     		getCalendar(shifts);
