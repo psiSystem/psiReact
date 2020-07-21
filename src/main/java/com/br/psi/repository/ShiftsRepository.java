@@ -27,4 +27,5 @@ public interface ShiftsRepository extends JpaRepository<Shifts, String> {
 	List<Shifts> findAllByDayWeekOfficeRoomClient(Client client);
 	
 	
+	
 }

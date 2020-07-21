@@ -61,6 +61,14 @@ public class ShiftsController {
     	User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return new ResponseEntity<List<Shifts>>(shiftsRepository.findByDayWeekOfficeRoomClient(user.getPerson().getClient()), HttpStatus.OK);
     }
+    @Secured({Const.ROLE_CLIENT, Const.ROLE_ADMIN,Const.ROLE_PRFESSIONAL})
+    @RequestMapping(value = "/shift/delete", method = RequestMethod.POST)
+    public ResponseEntity delete(@RequestBody Shifts shift){
+    	shift.setDayWeek(null);
+    	shiftsRepository.delete(shift);
+        return new ResponseEntity(HttpStatus.OK);
+    }
+    
     
     @Secured({Const.ROLE_CLIENT, Const.ROLE_ADMIN,Const.ROLE_PRFESSIONAL})
     @RequestMapping(value = "/shift/findAllOfficeRoom", method = RequestMethod.POST)
