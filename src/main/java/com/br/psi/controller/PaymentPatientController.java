@@ -36,7 +36,7 @@ public class PaymentPatientController {
     @Secured({Const.ROLE_ADMIN})
     @RequestMapping(value = "/paymentPatient/save", method = RequestMethod.POST)
     public ResponseEntity<PaymentPatient> save(@RequestBody @Valid PaymentPatient payment){
-    	 //this.paymentPatientRepository.save(payment);
+    	 this.paymentPatientRepository.save(payment);
         return new ResponseEntity<PaymentPatient>(payment, HttpStatus.OK);
     }
 

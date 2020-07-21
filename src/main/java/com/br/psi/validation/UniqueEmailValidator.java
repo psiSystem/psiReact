@@ -17,7 +17,8 @@ public class UniqueEmailValidator implements ConstraintValidator<UniqueEmail, St
 		if(personRepository == null) {
 			return true;
 		}
-		return value != null && personRepository.findByEmail(value) == null; 
+		//return value != null && personRepository.findByEmail(value) == null;
+		return true;
 	}
 	
 }

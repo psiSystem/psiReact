@@ -28,7 +28,7 @@ public class PaymentPatient {
 	@ManyToOne(fetch = FetchType.EAGER)
 	private Payment payment;
 	@Valid
-	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
 	private Patient patient;
 	@ManyToOne(fetch = FetchType.EAGER)
 	private PlanHeath planHealth;

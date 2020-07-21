@@ -17,7 +17,8 @@ public class UniqueCpfValidator implements ConstraintValidator<UniqueCpf, String
 		if(personRepository == null) {
 			return true;
 		}
-		return value != null && personRepository.findByCpf(value) == null; 
+		//return value != null && personRepository.findByCpf(value) == null;
+		return true;
 	}
 	
 }
