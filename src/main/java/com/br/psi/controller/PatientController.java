@@ -54,7 +54,7 @@ public class PatientController {
     @Autowired
     private PermissionRepository permissionRepository;
     
-    @Secured({Const.ROLE_ADMIN})
+    @Secured({Const.ROLE_CLIENT, Const.ROLE_ADMIN,Const.ROLE_PRFESSIONAL})
     @RequestMapping(value = "/patient/save", method = RequestMethod.POST)
     public ResponseEntity<Patient> save(@RequestBody @Valid PaymentPatient patientPayment){
     	
@@ -78,7 +78,7 @@ public class PatientController {
         return new ResponseEntity<Patient>(patient, HttpStatus.OK);
     }
 
-    @Secured({Const.ROLE_ADMIN})
+    @Secured({Const.ROLE_CLIENT, Const.ROLE_ADMIN,Const.ROLE_PRFESSIONAL})
     @RequestMapping(value = "/patient/edit", method = RequestMethod.PUT)
     public ResponseEntity<Patient> edit(@RequestBody Patient patient){
         this.patientRepository.save(patient);
