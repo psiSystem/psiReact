@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.br.psi.model.Client;
 import com.br.psi.model.Const;
+import com.br.psi.model.Formation;
 import com.br.psi.model.PlanHeath;
 import com.br.psi.model.PlanHeathClient;
 import com.br.psi.model.User;
@@ -67,10 +68,10 @@ public class PlanHeathController {
     }
 
     @Secured({Const.ROLE_CLIENT, Const.ROLE_ADMIN,Const.ROLE_PRFESSIONAL})
-    @RequestMapping(value = "/planHeath/findAll", method = RequestMethod.GET)
-    public ResponseEntity<List<PlanHeath>> list(){
+    @RequestMapping(value = "/planHeath/findAll", method = RequestMethod.POST)
+    public ResponseEntity<List<PlanHeath>> list(@RequestBody Formation formation){
     	User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-    	List<PlanHeathClient> findAllByClient = planHeathClientRepository.findAllByClient(user.getPerson().getClient());
+    	List<PlanHeathClient> findAllByClient = planHeathClientRepository.findAllByClientAndFormation(user.getPerson().getClient(),formation);
     	List<PlanHeath> list = new ArrayList<PlanHeath>() ;
     	 findAllByClient.forEach((plan) -> {
     		 list.add(plan.getPlanHeath());

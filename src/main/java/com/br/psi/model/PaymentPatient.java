@@ -33,6 +33,8 @@ public class PaymentPatient {
 	@ManyToOne(fetch = FetchType.EAGER)
 	private PlanHeath planHealth;
 	private Double value;
+	@ManyToOne(fetch = FetchType.EAGER)
+	private Formation formation;
 
 	public Long getId() {
 		return id;
@@ -112,6 +114,14 @@ public class PaymentPatient {
 
 	public void setAmount(Integer amount) {
 		this.amount = amount;
+	}
+
+	public Formation getFormation() {
+		return formation;
+	}
+
+	public void setFormation(Formation formation) {
+		this.formation = formation;
 	}
 
 }

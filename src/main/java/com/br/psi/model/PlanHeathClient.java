@@ -16,6 +16,8 @@ public class PlanHeathClient {
 	private PlanHeath planHeath;
 	@ManyToOne(fetch = FetchType.EAGER)
 	private Client client;
+	@ManyToOne(fetch = FetchType.EAGER)
+	private Formation formation;
 	private Double value;
 
 	public Long getId() {
@@ -50,4 +52,13 @@ public class PlanHeathClient {
 		this.value = value;
 	}
 
+	public Formation getFormation() {
+		return formation;
+	}
+
+	public void setFormation(Formation formation) {
+		this.formation = formation;
+	}
+
+	
 }

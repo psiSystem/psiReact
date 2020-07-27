@@ -109,11 +109,10 @@ public class ScheduleController {
 				model.setPaymentPatient(paymentPatient);
 				list.add(model);
 			}
-		
-			}else {
-				throw new Exception("Paciente "+schedule.getPatient().getPerson().getName()+" não possui créditos disponível.");
+			return;
 			}
 		}
+		throw new Exception("Paciente "+schedule.getPatient().getPerson().getName()+" não possui créditos disponível.");
 	}
 
 	private void createMonth(Schedule schedule, List<Schedule> list) throws Exception {
