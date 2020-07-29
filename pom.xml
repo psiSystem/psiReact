@@ -43,11 +43,6 @@
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.h2database</groupId>
-			<artifactId>h2</artifactId>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
 			<groupId>com.microsoft.sqlserver</groupId>
 			<artifactId>mssql-jdbc</artifactId>
 			<scope>runtime</scope>
@@ -86,7 +81,8 @@
 	</dependencies>
 
 	<build>
-		<finalName>psi</finalName>
+	 <finalName>api</finalName> 
+	<pluginManagement>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
@@ -116,7 +112,7 @@
 				       <goal>npm</goal>
 				      </goals>
 				     </execution>
-				    <!--  <execution>
+				      <execution>
 				      <id>Build frontend</id>
 				      <goals>
 				       <goal>npm</goal>
@@ -124,7 +120,7 @@
 				      <configuration>
 				       <arguments>run build</arguments>
 				      </configuration>
-				     </execution>  -->
+				     </execution> 
 				</executions>
 			</plugin>
 			<plugin>
@@ -150,16 +146,8 @@
 			    </executions>
 			</plugin>
 			
-			<!-- <plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<configuration>
-					<verbose>true</verbose>
-					<fork>true</fork>
-					<executable>${JAVA_HOME}/bin/javac</executable>
-				</configuration>
-			</plugin> -->
 		</plugins>
+		</pluginManagement>
 	</build>
 
 </project>
