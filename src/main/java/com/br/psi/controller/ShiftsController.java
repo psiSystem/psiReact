@@ -1,13 +1,8 @@
 package com.br.psi.controller;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,13 +18,12 @@ import com.br.psi.model.Const;
 import com.br.psi.model.DayWeek;
 import com.br.psi.model.Formation;
 import com.br.psi.model.OfficeRoom;
-import com.br.psi.model.Professional;
 import com.br.psi.model.Shifts;
 import com.br.psi.model.User;
 import com.br.psi.repository.ShiftsRepository;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping
 public class ShiftsController {
 
     @Autowired

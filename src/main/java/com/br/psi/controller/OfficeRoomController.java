@@ -1,8 +1,4 @@
 package com.br.psi.controller;
-import java.text.SimpleDateFormat;
-import java.time.format.DateTimeFormatter;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -26,7 +22,7 @@ import com.br.psi.repository.OfficeRoomRepository;
 import com.br.psi.repository.ShiftsRepository;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping
 public class OfficeRoomController {
 
 

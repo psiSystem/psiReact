@@ -19,7 +19,7 @@ import com.br.psi.repository.DayWeekRepository;
 import com.br.psi.repository.OfficeRoomRepository;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping
 public class DayWeekController {
 
 	 @Autowired

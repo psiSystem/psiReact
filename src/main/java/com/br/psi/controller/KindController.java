@@ -1,11 +1,5 @@
 package com.br.psi.controller;
-import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,12 +12,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.br.psi.model.Const;
 import com.br.psi.model.Kind;
-import com.br.psi.model.Schedule;
 import com.br.psi.repository.KindRepository;
-import com.br.psi.repository.ScheduleRepository;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping
 public class KindController {
 
     @Autowired
