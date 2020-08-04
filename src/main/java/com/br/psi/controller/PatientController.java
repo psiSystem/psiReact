@@ -31,6 +31,7 @@ import com.br.psi.model.Professional;
 import com.br.psi.model.User;
 import com.br.psi.repository.ClientRepository;
 import com.br.psi.repository.PatientRepository;
+import com.br.psi.repository.PatientRepositoryService;
 import com.br.psi.repository.PaymentPatientRepository;
 import com.br.psi.repository.PermissionRepository;
 import com.br.psi.repository.UserRepository;
@@ -41,6 +42,9 @@ public class PatientController {
 
     @Autowired
     private PatientRepository patientRepository;
+    
+    @Autowired
+    private PatientRepositoryService patientRepositoryService;
 
     @Autowired
     private PaymentPatientRepository paymentPatientRepository;
@@ -90,8 +94,16 @@ public class PatientController {
     public ResponseEntity<List<Patient>> list(){
     	User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         
-        return new ResponseEntity<List<Patient>>(patientRepository.findByPersonClient(user.getPerson().getClient()), HttpStatus.OK);
+        return new ResponseEntity<List<Patient>>(patientRepositoryService.findByPersonClient(user.getPerson().getClient()), HttpStatus.OK);
     }
-
+    
+    @Secured({Const.ROLE_CLIENT, Const.ROLE_ADMIN,Const.ROLE_PRFESSIONAL})
+    @RequestMapping(value = "/patient/findAllPatient", method = RequestMethod.POST)
+    public ResponseEntity<List<Patient>> findAllPatient(@RequestBody Patient patient){
+    	User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    	List<Patient> list = patientRepositoryService.findByPersonClientAndPatient(user.getPerson().getClient(),patient);
+        return new ResponseEntity<List<Patient>>(list, HttpStatus.OK);
+    }
+    
 
 }

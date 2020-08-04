@@ -62,14 +62,18 @@ public class PlanHeathController {
     }
 
     @Secured({Const.ROLE_CLIENT, Const.ROLE_ADMIN,Const.ROLE_PRFESSIONAL})
-    @RequestMapping(value = "/planHeath/findAll", method = RequestMethod.POST)
-    public ResponseEntity<List<PlanHeath>> list(@RequestBody Formation formation){
+    @RequestMapping(value = "/planHeath/findAll", method = RequestMethod.GET)
+    public ResponseEntity<List<PlanHeath>> list(){
     	User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-    	List<PlanHeathClient> findAllByClient = planHeathClientRepository.findAllByClientAndFormation(user.getPerson().getClient(),formation);
-    	List<PlanHeath> list = new ArrayList<PlanHeath>() ;
-    	 findAllByClient.forEach((plan) -> {
-    		 list.add(plan.getPlanHeath());
+    	List<PlanHeath> list = planHeathRepository.findAll(user.getPerson().getClient());
+    	List<PlanHeathClient> plansClient = planHeathClientRepository.findAllByClient(user.getPerson().getClient());
+    	List<PlanHeath> list1 = new ArrayList<PlanHeath>();
+    	plansClient.forEach(plan->{
+    		list1.add(plan.getPlanHeath());
     	});
+    	
+    	list.removeIf(p-> !list1.contains(p));
+    	
         return new ResponseEntity<List<PlanHeath>>(list, HttpStatus.OK);
     }
 

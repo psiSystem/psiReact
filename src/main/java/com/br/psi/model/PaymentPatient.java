@@ -7,6 +7,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.Transient;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 
@@ -35,7 +36,9 @@ public class PaymentPatient {
 	private Double value;
 	@ManyToOne(fetch = FetchType.EAGER)
 	private Formation formation;
-
+	@Transient
+	private Integer amountConsumo;
+	
 	public Long getId() {
 		return id;
 	}
@@ -123,5 +126,15 @@ public class PaymentPatient {
 	public void setFormation(Formation formation) {
 		this.formation = formation;
 	}
+
+	public Integer getAmountConsumo() {
+		return amountConsumo;
+	}
+
+	public void setAmountConsumo(Integer amountConsumo) {
+		this.amountConsumo = amountConsumo;
+	}
+	
+	
 
 }

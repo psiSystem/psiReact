@@ -14,7 +14,7 @@ public class Shifts {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
-	@ManyToOne(fetch = FetchType.EAGER,cascade = CascadeType.MERGE)
+	@ManyToOne(fetch = FetchType.EAGER)
 	private DayWeek dayWeek;
 	private String timeStart;
 	private String timeEnd;

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.br.psi.dto.FilterCalendar;
 import com.br.psi.model.Const;
 import com.br.psi.model.DayWeek;
 import com.br.psi.model.Formation;
@@ -73,13 +74,16 @@ public class ShiftsController {
 
     @Secured({Const.ROLE_CLIENT, Const.ROLE_ADMIN,Const.ROLE_PRFESSIONAL})
     @RequestMapping(value = "/shift/listOfficeRoomCalendar", method = RequestMethod.POST)
-    public ResponseEntity<List<Shifts>> listOfficeRoomCalendar(@RequestBody Formation formation){
+    public ResponseEntity<List<Shifts>> listOfficeRoomCalendar(@RequestBody FilterCalendar filter){
     	list = new ArrayList<Shifts>();
     	User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     	List<Shifts> findByDayWeekOfficeRoom  = new ArrayList<Shifts>();
-    	if(formation.getId() != null) {
-    		findByDayWeekOfficeRoom	 = shiftsRepository.findByProfessionalFormation(formation);
-    		findByDayWeekOfficeRoom.addAll(shiftsRepository.findByProfessionalIsNull());
+    	if(filter.getFormation().getId() != null && filter.getProfessional().getId() != null) {
+    		findByDayWeekOfficeRoom	 = shiftsRepository.findByProfessionalAndProfessionalFormation(filter.getProfessional(),filter.getFormation());
+    	}else if (filter.getFormation().getId() != null) {
+    		findByDayWeekOfficeRoom	 = shiftsRepository.findByProfessionalFormation(filter.getFormation());
+    	}else if (filter.getProfessional().getId() != null){
+    		findByDayWeekOfficeRoom	 = shiftsRepository.findByProfessional(filter.getProfessional());
     	}else {
     		findByDayWeekOfficeRoom = shiftsRepository.findAllByDayWeekOfficeRoomClient(user.getPerson().getClient());
     	}

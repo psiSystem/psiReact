@@ -22,6 +22,7 @@ import com.br.psi.model.Status;
 import com.br.psi.model.User;
 import com.br.psi.repository.PermissionRepository;
 import com.br.psi.repository.ProfessionalRepository;
+import com.br.psi.repository.ProfessionalRepositoryService;
 import com.br.psi.repository.UserRepository;
 
 @RestController
@@ -30,6 +31,9 @@ public class ProfessionalController {
 
     @Autowired
     private ProfessionalRepository professionalRepository;
+    
+    @Autowired
+    private ProfessionalRepositoryService professionalRepositoryService;
     
     @Autowired
     private UserRepository userRepository;
@@ -75,8 +79,18 @@ public class ProfessionalController {
         
     	User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         
-        return new ResponseEntity<List<Professional>>(professionalRepository.findByPersonClient(user.getPerson().getClient()), HttpStatus.OK);
+        return new ResponseEntity<List<Professional>>(professionalRepositoryService.findByPersonClient(user.getPerson().getClient()), HttpStatus.OK);
     }
-
+    
+    @Secured({Const.ROLE_CLIENT, Const.ROLE_ADMIN,Const.ROLE_PRFESSIONAL})
+    @RequestMapping(value = "/professional/findAllByProfessional", method = RequestMethod.POST)
+    public ResponseEntity<List<Professional>> findAllByProfessional(@RequestBody Professional professional){
+        
+    	User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    	List<Professional> list = professionalRepositoryService.findByPersonClientAndPersonName(user.getPerson().getClient(),professional.getPerson().getName());
+    	
+        return new ResponseEntity<List<Professional>>(list, HttpStatus.OK);
+    }
+    
 
 }

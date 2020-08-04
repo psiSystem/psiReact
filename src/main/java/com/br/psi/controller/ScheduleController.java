@@ -26,6 +26,7 @@ import com.br.psi.model.Shifts;
 import com.br.psi.model.User;
 import com.br.psi.repository.PaymentPatientRepository;
 import com.br.psi.repository.ProfessionalRepository;
+import com.br.psi.repository.ProfessionalRepositoryService;
 import com.br.psi.repository.ScheduleRepository;
 import com.br.psi.repository.ShiftsRepository;
 
@@ -40,7 +41,7 @@ public class ScheduleController {
     @Autowired
     private ShiftsRepository shiftsRepository;
     @Autowired
-    private ProfessionalRepository professionalRepository;
+    private ProfessionalRepositoryService professionalRepositoryService;
     
     
     @Secured({Const.ROLE_ADMIN,Const.ROLE_PRFESSIONAL,Const.ROLE_CLIENT})
@@ -83,17 +84,21 @@ public class ScheduleController {
 
 	private void creatList(Schedule schedule, List<Schedule> list) throws Exception {
 		List<PaymentPatient> paymentPatients = paymentPatientRepository.findByPatient(schedule.getPatient());
+		int count = list.size()+1;
+		int contol = 1;
+		int j = 1;
+		list.add(schedule);
 		for (PaymentPatient paymentPatient : paymentPatients) {
-			
 			Integer amountMultiple = schedule.getKind().getAmountMultiple();
-			schedule.setPaymentPatient(paymentPatient);
 				if(paymentPatient.getAmount() != null) {
 					List<Schedule> findByPaymentPatient = scheduleRepository.findByPaymentPatient(paymentPatient);
-					amountMultiple = paymentPatient.getAmount() - findByPaymentPatient.size() - 1;
+					amountMultiple = paymentPatient.getAmount() - findByPaymentPatient.size() - contol ;
 				}
 			
-			if(amountMultiple > 0) {
-				list.add(schedule);
+				if(schedule.getPaymentPatient() == null && amountMultiple > 0) {
+					schedule.setPaymentPatient(paymentPatient);
+					contol = 0;
+				}
 			for (int i = 1; i <= amountMultiple ; i++) {
 				Date dateStart = new Date(schedule.getDateStart().getTime());
 				Date dateEnd = new Date(schedule.getDateEnd().getTime());
@@ -101,18 +106,22 @@ public class ScheduleController {
 				model.setProfessional(schedule.getProfessional());
 				model.setPatient(schedule.getPatient());
 				model.setKind(schedule.getKind());
-				dateStart.setDate(dateStart.getDate() + (schedule.getKind().getAmountDay() * i));
-				dateEnd.setDate(dateEnd.getDate() + (schedule.getKind().getAmountDay() * i));
+				dateStart.setDate(dateStart.getDate() + (schedule.getKind().getAmountDay() * j));
+				dateEnd.setDate(dateEnd.getDate() + (schedule.getKind().getAmountDay() * j));
 				model.setDateStart(dateStart);
 				model.setDateEnd(dateEnd);
 				model.setDayOfWeek(schedule.getDayOfWeek());
 				model.setPaymentPatient(paymentPatient);
+				model.setOfficeRoom(schedule.getOfficeRoom());
 				list.add(model);
+				j+=1;
 			}
-			return;
 			}
-		}
-		throw new Exception("Paciente "+schedule.getPatient().getPerson().getName()+" não possui créditos disponível.");
+
+		if(list.size() <= count)
+			throw new Exception("Paciente "+schedule.getPatient().getPerson().getName()+" não possui créditos disponível.");
+		
+		
 	}
 
 	private void createMonth(Schedule schedule, List<Schedule> list) throws Exception {
@@ -253,7 +262,7 @@ public class ScheduleController {
 	@RequestMapping(value = "/schedule/findAllByprofessional", method = RequestMethod.GET)
 	public ResponseEntity<List<Schedule>> findAllByprofessional(){
 		User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-	    Professional professional = professionalRepository.findByPerson(user.getPerson());
+	    Professional professional = professionalRepositoryService.findByPerson(user.getPerson());
 		 
 		List<Schedule> list = scheduleRepository.findByProfessionalIdAndDateStart(professional.getId(), new Date());
 			list = createListSchedule(list,professional);       

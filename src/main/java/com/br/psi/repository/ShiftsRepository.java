@@ -10,6 +10,7 @@ import com.br.psi.model.Client;
 import com.br.psi.model.DayWeek;
 import com.br.psi.model.Formation;
 import com.br.psi.model.OfficeRoom;
+import com.br.psi.model.Professional;
 import com.br.psi.model.Shifts;
 
 public interface ShiftsRepository extends JpaRepository<Shifts, String> {
@@ -25,6 +26,12 @@ public interface ShiftsRepository extends JpaRepository<Shifts, String> {
 	List<Shifts> findByProfessionalId(Long id);
 	@Query("select s from Shifts s where s.dayWeek.officeRoom.client = :client")
 	List<Shifts> findAllByDayWeekOfficeRoomClient(Client client);
+
+	List<Shifts> findByProfessionalOrProfessionalFormation(Professional professional, Formation formation);
+
+	List<Shifts> findByProfessionalAndProfessionalFormation(Professional professional, Formation formation);
+
+	List<Shifts> findByProfessional(Professional professional);
 	
 	
 	

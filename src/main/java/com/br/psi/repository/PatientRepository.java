@@ -9,7 +9,4 @@ import com.br.psi.model.Patient;
 
 public interface PatientRepository extends JpaRepository<Patient, String> {
 
-	List<Patient> findByPersonClient(Client client);
-
-	Patient findById(Long id);
 }
