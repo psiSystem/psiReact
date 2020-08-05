@@ -54,11 +54,25 @@ public class Person {
 	@Valid
 	private Anddress anddress;
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinTable(name = "person_client" , joinColumns = @JoinColumn(name = "person_id"), inverseJoinColumns = @JoinColumn(name="client_id"))
+	@JoinTable(name = "person_client", joinColumns = @JoinColumn(name = "person_id"), inverseJoinColumns = @JoinColumn(name = "client_id"))
 	private Client client;
 	@NotBlank(message = "{campo.obrigatorio}")
 	private String phone;
-	
+	private Date createDate;
+
+	public Person() {
+		super();
+		this.createDate = new Date();
+	}
+
+	public Date getCreateDate() {
+		return createDate;
+	}
+
+	public void setCreateDate(Date createDate) {
+		this.createDate = createDate;
+	}
+
 	public Long getId() {
 		return id;
 	}
@@ -84,7 +98,7 @@ public class Person {
 	}
 
 	public Date getBornDate() throws ParseException {
-		
+
 		return bornDate;
 	}
 
@@ -139,7 +153,5 @@ public class Person {
 	public void setPhone(String phone) {
 		this.phone = phone;
 	}
-	
-	
 
 }

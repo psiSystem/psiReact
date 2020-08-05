@@ -26,7 +26,7 @@ import com.br.psi.repository.ProfessionalRepositoryService;
 import com.br.psi.repository.UserRepository;
 
 @RestController
-@RequestMapping
+@RequestMapping("/api")
 public class ProfessionalController {
 
     @Autowired

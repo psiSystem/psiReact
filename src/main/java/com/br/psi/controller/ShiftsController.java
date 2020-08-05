@@ -22,13 +22,16 @@ import com.br.psi.model.OfficeRoom;
 import com.br.psi.model.Shifts;
 import com.br.psi.model.User;
 import com.br.psi.repository.ShiftsRepository;
+import com.br.psi.repository.ShiftsRepositoryService;
 
 @RestController
-@RequestMapping
+@RequestMapping("/api")
 public class ShiftsController {
 
     @Autowired
     private ShiftsRepository shiftsRepository;
+    @Autowired
+    private ShiftsRepositoryService shiftsRepositoryService;
     private List<Shifts> list ;
     
     @Secured({Const.ROLE_ADMIN,Const.ROLE_CLIENT})
@@ -109,6 +112,7 @@ public class ShiftsController {
 					model.setTimeEnd(localEned.toString());
 					model.setProfessional(shifts.getProfessional());
 					model.setDayWeek(shifts.getDayWeek());
+					model.setTimeAvailable(shiftsRepositoryService.findByTimeAvailable(model.getDayWeek().getDayOfWeek(),model.getProfessional(),localStart,localEned,model.getDayWeek().getOfficeRoom()));
 					if(localEned.isAfter(LocalDateTime.now()))
 						list.add(model);
 				}

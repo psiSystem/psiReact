@@ -1,5 +1,6 @@
 package com.br.psi.model;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -33,9 +34,20 @@ public class User {
     @JoinTable(name="permission_user", joinColumns = @JoinColumn(name="user_id"), inverseJoinColumns = @JoinColumn(name="permission_id")
     )
     private List<Permission> permissions;
+    private Date createDate;
 
-    public User() {
-    }
+	public User() {
+		this.createDate = new Date();
+	}
+
+	public Date getCreateDate() {
+		return createDate;
+	}
+
+	public void setCreateDate(Date createDate) {
+		this.createDate = createDate;
+	}
+    
 
     public User(String userName) {
         super();

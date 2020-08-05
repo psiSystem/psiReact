@@ -1,6 +1,7 @@
 package com.br.psi.model;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -27,7 +28,21 @@ public class DayWeek {
 	private Boolean enabled;
 	@Transient
 	private List<Shifts> listShifts;
-	
+	private Date createDate;
+
+	public DayWeek() {
+		super();
+		this.createDate = new Date();
+	}
+
+	public Date getCreateDate() {
+		return createDate;
+	}
+
+	public void setCreateDate(Date createDate) {
+		this.createDate = createDate;
+	}
+
 	public List<Shifts> getListShifts() {
 		return listShifts;
 	}
@@ -77,7 +92,7 @@ public class DayWeek {
 	}
 
 	public static int dayWeek(DayWeek day) {
-    	int dayWeek = 0;
+		int dayWeek = 0;
 		switch (day.getDay()) {
 		case "Segunda Feira":
 			dayWeek = Calendar.MONDAY - 1;

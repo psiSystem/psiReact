@@ -1,5 +1,7 @@
 package com.br.psi.model;
 
+import java.util.Date;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -25,7 +27,21 @@ public class Patient {
 	@NotBlank(message = "{campo.obrigatorio}")
 	@Column(nullable = false)
 	private String emergencialPhone;
-	
+	private Date createDate;
+
+	public Patient() {
+		super();
+		this.createDate = new Date();
+	}
+
+	public Date getCreateDate() {
+		return createDate;
+	}
+
+	public void setCreateDate(Date createDate) {
+		this.createDate = createDate;
+	}
+
 	public Long getId() {
 		return id;
 	}

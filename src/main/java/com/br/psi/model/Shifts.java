@@ -1,6 +1,7 @@
 package com.br.psi.model;
 
-import javax.persistence.CascadeType;
+import java.util.Date;
+
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -20,6 +21,21 @@ public class Shifts {
 	private String timeEnd;
 	@ManyToOne(fetch = FetchType.EAGER)
 	private Professional professional;
+	private Date createDate;
+	private Boolean timeAvailable;
+
+	public Shifts() {
+		super();
+		this.createDate = new Date();
+	}
+
+	public Date getCreateDate() {
+		return createDate;
+	}
+
+	public void setCreateDate(Date createDate) {
+		this.createDate = createDate;
+	}
 
 	public Long getId() {
 		return id;
@@ -59,6 +75,14 @@ public class Shifts {
 
 	public void setProfessional(Professional professional) {
 		this.professional = professional;
+	}
+
+	public Boolean getTimeAvailable() {
+		return timeAvailable;
+	}
+
+	public void setTimeAvailable(Boolean timeAvailable) {
+		this.timeAvailable = timeAvailable;
 	}
 
 }

@@ -1,5 +1,7 @@
 package com.br.psi.model;
 
+import java.util.Date;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -28,8 +30,7 @@ public class PaymentPatient {
 	@Valid
 	@ManyToOne(fetch = FetchType.EAGER)
 	private Payment payment;
-	@Valid
-	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+	@ManyToOne(fetch = FetchType.EAGER)
 	private Patient patient;
 	@ManyToOne(fetch = FetchType.EAGER)
 	private PlanHeath planHealth;
@@ -38,7 +39,22 @@ public class PaymentPatient {
 	private Formation formation;
 	@Transient
 	private Integer amountConsumo;
+	private Date createDate;
 	
+	
+	public PaymentPatient() {
+		super();
+		this.createDate = new Date();
+	}
+
+	public Date getCreateDate() {
+		return createDate;
+	}
+
+	public void setCreateDate(Date createDate) {
+		this.createDate = createDate;
+	}
+
 	public Long getId() {
 		return id;
 	}

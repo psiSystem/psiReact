@@ -1,5 +1,7 @@
 package com.br.psi.model;
 
+import java.util.Date;
+
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -19,7 +21,20 @@ public class PlanHeathClient {
 	@ManyToOne(fetch = FetchType.EAGER)
 	private Formation formation;
 	private Double value;
+	private Date createDate;
 
+	public PlanHeathClient() {
+		super();
+		this.createDate = new Date();
+	}
+
+	public Date getCreateDate() {
+		return createDate;
+	}
+
+	public void setCreateDate(Date createDate) {
+		this.createDate = createDate;
+	}
 	public Long getId() {
 		return id;
 	}

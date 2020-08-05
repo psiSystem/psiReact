@@ -15,7 +15,7 @@ import com.br.psi.model.Status;
 import com.br.psi.repository.StatusRepository;
 
 @RestController
-@RequestMapping
+@RequestMapping("/api")
 public class StatusController {
 
     @Autowired

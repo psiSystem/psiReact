@@ -1,5 +1,7 @@
 package com.br.psi.model;
 
+import java.util.Date;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -23,15 +25,25 @@ public class Client {
 	private String cnpj;
 	@ManyToOne(cascade = CascadeType.PERSIST)
 	private Anddress anddress;
-	
+	private Date createDate;
+
 	public Client() {
 		super();
+		this.createDate = new Date();
+	}
+
+	public Date getCreateDate() {
+		return createDate;
+	}
+
+	public void setCreateDate(Date createDate) {
+		this.createDate = createDate;
 	}
 
 	public Client(Long id) {
 		this.id = id;
 	}
-	
+
 	public Long getId() {
 		return id;
 	}

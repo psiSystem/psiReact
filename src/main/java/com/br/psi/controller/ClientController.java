@@ -18,7 +18,7 @@ import com.br.psi.model.Const;
 import com.br.psi.repository.ClientRepository;
 
 @RestController
-@RequestMapping
+@RequestMapping("/api")
 public class ClientController {
 
     @Autowired

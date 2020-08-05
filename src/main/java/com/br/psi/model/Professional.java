@@ -1,5 +1,6 @@
 package com.br.psi.model;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -36,7 +37,20 @@ public class Professional {
     private List<Specialty> specialtys;
 	@ManyToOne(fetch = FetchType.EAGER)
 	private Status status;
-	
+	private Date createDate;
+
+	public Professional() {
+		super();
+		this.createDate = new Date();
+	}
+
+	public Date getCreateDate() {
+		return createDate;
+	}
+
+	public void setCreateDate(Date createDate) {
+		this.createDate = createDate;
+	}
 	public Long getId() {
 		return id;
 	}

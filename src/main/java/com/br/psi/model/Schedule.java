@@ -28,6 +28,20 @@ public class Schedule {
 	private PaymentPatient paymentPatient;
 	@ManyToOne(fetch = FetchType.EAGER)
 	private OfficeRoom officeRoom;
+	private Date createDate;
+
+	public Schedule() {
+		super();
+		this.createDate = new Date();
+	}
+
+	public Date getCreateDate() {
+		return createDate;
+	}
+
+	public void setCreateDate(Date createDate) {
+		this.createDate = createDate;
+	}
 
 	public Long getId() {
 		return id;

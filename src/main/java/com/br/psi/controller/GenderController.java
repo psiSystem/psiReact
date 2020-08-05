@@ -15,7 +15,7 @@ import com.br.psi.model.Gender;
 import com.br.psi.repository.GenderRepository;
 
 @RestController
-@RequestMapping
+@RequestMapping("/api")
 public class GenderController {
 
     @Autowired

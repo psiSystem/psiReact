@@ -6,4 +6,6 @@ import com.br.psi.model.Professional;
 
 public interface ProfessionalRepository extends JpaRepository<Professional, String> {
 
+	Professional findAllById(Long id);
+
 }

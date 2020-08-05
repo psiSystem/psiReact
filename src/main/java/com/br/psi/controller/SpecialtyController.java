@@ -16,7 +16,7 @@ import com.br.psi.model.Specialty;
 import com.br.psi.repository.SpecialtyRepository;
 
 @RestController
-@RequestMapping
+@RequestMapping("/api")
 public class SpecialtyController {
 
     @Autowired

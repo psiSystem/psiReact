@@ -15,7 +15,7 @@ import com.br.psi.model.Kind;
 import com.br.psi.repository.KindRepository;
 
 @RestController
-@RequestMapping
+@RequestMapping("/api")
 public class KindController {
 
     @Autowired

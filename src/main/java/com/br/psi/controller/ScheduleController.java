@@ -31,7 +31,7 @@ import com.br.psi.repository.ScheduleRepository;
 import com.br.psi.repository.ShiftsRepository;
 
 @RestController
-@RequestMapping
+@RequestMapping("/api")
 public class ScheduleController {
 
     @Autowired
@@ -42,7 +42,8 @@ public class ScheduleController {
     private ShiftsRepository shiftsRepository;
     @Autowired
     private ProfessionalRepositoryService professionalRepositoryService;
-    
+    @Autowired
+    private ProfessionalRepository professionalRepository;
     
     @Secured({Const.ROLE_ADMIN,Const.ROLE_PRFESSIONAL,Const.ROLE_CLIENT})
     @RequestMapping(value = "/schedule/save", method = RequestMethod.POST)
@@ -83,7 +84,8 @@ public class ScheduleController {
 	}
 
 	private void creatList(Schedule schedule, List<Schedule> list) throws Exception {
-		List<PaymentPatient> paymentPatients = paymentPatientRepository.findByPatient(schedule.getPatient());
+		Professional professional = professionalRepository.findAllById(schedule.getProfessional().getId());
+		List<PaymentPatient> paymentPatients = paymentPatientRepository.findByPatientAndFormation(schedule.getPatient(),professional.getFormation());;
 		int count = list.size()+1;
 		int contol = 1;
 		int j = 1;
@@ -142,7 +144,8 @@ public class ScheduleController {
 
 	private void createUnique(Schedule schedule, List<Schedule> list) throws Exception {
 		//alterar metodo para validar status de pagamentos validos.
-		List<PaymentPatient> paymentPatients = paymentPatientRepository.findByPatient(schedule.getPatient());
+		Professional professional = professionalRepository.findAllById(schedule.getProfessional().getId());
+		List<PaymentPatient> paymentPatients = paymentPatientRepository.findByPatientAndFormation(schedule.getPatient(),professional.getFormation());
 		for (PaymentPatient paymentPatient : paymentPatients) {
 			List<Schedule> findByPaymentPatient = scheduleRepository.findByPaymentPatient(paymentPatient);
 				if(paymentPatient.getAmount() == null || findByPaymentPatient.size() < paymentPatient.getAmount()) {
