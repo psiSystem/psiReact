@@ -21,7 +21,7 @@ import com.br.psi.repository.PlanHeathClientRepository;
 import com.br.psi.repository.PlanHeathRepository;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping
 public class PlanHeathController {
 
     @Autowired

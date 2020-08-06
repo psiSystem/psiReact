@@ -22,7 +22,7 @@ import com.br.psi.repository.PaymentPatientRepositoryService;
 import com.br.psi.repository.ScheduleRepository;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping
 public class PaymentPatientController {
 
     @Autowired
