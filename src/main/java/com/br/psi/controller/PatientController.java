@@ -37,7 +37,7 @@ import com.br.psi.repository.PermissionRepository;
 import com.br.psi.repository.UserRepository;
 
 @RestController
-@RequestMapping
+@RequestMapping("/api")
 public class PatientController {
 
     @Autowired

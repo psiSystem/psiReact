@@ -23,7 +23,7 @@ import com.br.psi.repository.GroupSpecialtyRepository;
 import com.br.psi.repository.PlanHeathRepository;
 
 @RestController
-@RequestMapping
+@RequestMapping("/api")
 public class GroupSpecialtyController {
 
     @Autowired

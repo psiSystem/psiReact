@@ -1,5 +1,7 @@
 package com.br.psi.controller;
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -21,15 +23,18 @@ import com.br.psi.model.Formation;
 import com.br.psi.model.OfficeRoom;
 import com.br.psi.model.Shifts;
 import com.br.psi.model.User;
+import com.br.psi.repository.DayWeekRepository;
 import com.br.psi.repository.ShiftsRepository;
 import com.br.psi.repository.ShiftsRepositoryService;
 
 @RestController
-@RequestMapping
+@RequestMapping("/api")
 public class ShiftsController {
 
     @Autowired
     private ShiftsRepository shiftsRepository;
+    @Autowired
+    private DayWeekRepository dayWeekRepository;
     @Autowired
     private ShiftsRepositoryService shiftsRepositoryService;
     private List<Shifts> list ;
@@ -47,7 +52,8 @@ public class ShiftsController {
     	
     	listShift.forEach(shift -> {
     		shift.getDayWeek().setDayOfWeek(DayWeek.dayWeek(shift.getDayWeek()));
-    		 this.shiftsRepository.save(shift);
+    		dayWeekRepository.save(shift.getDayWeek());
+    		shiftsRepository.save(shift);
     	});
        
         return new ResponseEntity<List<Shifts>>( listShift,HttpStatus.OK);
@@ -81,16 +87,7 @@ public class ShiftsController {
     	list = new ArrayList<Shifts>();
     	User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     	List<Shifts> findByDayWeekOfficeRoom  = new ArrayList<Shifts>();
-    	if(filter.getFormation().getId() != null && filter.getProfessional().getId() != null) {
-    		findByDayWeekOfficeRoom	 = shiftsRepository.findByProfessionalAndProfessionalFormation(filter.getProfessional(),filter.getFormation());
-    	}else if (filter.getFormation().getId() != null) {
-    		findByDayWeekOfficeRoom	 = shiftsRepository.findByProfessionalFormation(filter.getFormation());
-    	}else if (filter.getProfessional().getId() != null){
-    		findByDayWeekOfficeRoom	 = shiftsRepository.findByProfessional(filter.getProfessional());
-    	}else {
-    		findByDayWeekOfficeRoom = shiftsRepository.findAllByDayWeekOfficeRoomClient(user.getPerson().getClient());
-    	}
-    	
+    	findByDayWeekOfficeRoom	 = shiftsRepositoryService.findByProfessionalAndProfessionalFormation(filter,user.getPerson().getClient());
     	
     	findByDayWeekOfficeRoom.forEach((shifts) -> {
     		getCalendar(shifts);
@@ -100,16 +97,16 @@ public class ShiftsController {
     }
 
 	private void getCalendar(Shifts shifts) {
-		Date start = new Date(shifts.getTimeStart());
-		Date ended = new Date(shifts.getTimeEnd());
+		Date start = shifts.getTimeStart();
+		Date ended = shifts.getTimeEnd();
 		LocalDateTime now = LocalDateTime.now();
 		for(int i = 0; i < 56; i++) {
 			if(now.getDayOfWeek().getValue() == shifts.getDayWeek().getDayOfWeek().intValue()) {
 					LocalDateTime localStart = LocalDateTime.of(now.getYear(), now.getMonthValue(), now.getDayOfMonth(), start.getHours(), start.getMinutes());
 					LocalDateTime localEned = LocalDateTime.of(now.getYear(), now.getMonthValue(), now.getDayOfMonth(), ended.getHours(), ended.getMinutes());
 					Shifts model = new Shifts();
-					model.setTimeStart(localStart.toString());
-					model.setTimeEnd(localEned.toString());
+					model.setTimeStart(Date.from(localStart.atZone(ZoneId.systemDefault()).toInstant()));
+					model.setTimeEnd(Date.from(localEned.atZone(ZoneId.systemDefault()).toInstant()));
 					model.setProfessional(shifts.getProfessional());
 					model.setDayWeek(shifts.getDayWeek());
 					model.setTimeAvailable(shiftsRepositoryService.findByTimeAvailable(model.getDayWeek().getDayOfWeek(),model.getProfessional(),localStart,localEned,model.getDayWeek().getOfficeRoom()));

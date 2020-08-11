@@ -31,7 +31,7 @@ import com.br.psi.repository.ScheduleRepository;
 import com.br.psi.repository.ShiftsRepository;
 
 @RestController
-@RequestMapping
+@RequestMapping("/api")
 public class ScheduleController {
 
     @Autowired
@@ -295,8 +295,8 @@ public class ScheduleController {
 		for (Shifts shift : shifts) {
 			LocalDateTime now = LocalDateTime.now();
 			for(int i = 0; i < 56; i++) {
-				Date start = new Date(shift.getTimeStart());
-				Date ended = new Date(shift.getTimeEnd());
+				Date start = shift.getTimeStart();
+				Date ended = shift.getTimeEnd();
 				int timeSession = 30;
 				long st = start.getTime();
 				long end = ended.getTime();

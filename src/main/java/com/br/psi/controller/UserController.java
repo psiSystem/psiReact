@@ -19,7 +19,7 @@ import com.br.psi.model.User;
 import com.br.psi.repository.UserRepository;
 
 @RestController
-@RequestMapping
+@RequestMapping("/api")
 public class UserController {
 
     @Autowired
