@@ -5,9 +5,11 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
@@ -23,6 +25,11 @@ import org.springframework.security.oauth2.provider.token.store.InMemoryTokenSto
 import com.br.psi.service.MyUserDetailsService;
 
 @Configuration
+/*
+ * @EnableWebSecurity
+ * 
+ * @Profile("!https")
+ */
 public class OAuth2ServerConfiguration {
 
     private static final String RESOURCE_ID = "restservice";
@@ -40,13 +47,20 @@ public class OAuth2ServerConfiguration {
 
         @Override
         public void configure(HttpSecurity http) throws Exception {
-            http
-                    .logout()
-                    .invalidateHttpSession(true)
-                    .clearAuthentication(true)
-                    .and().authorizeRequests()
-                    .anyRequest().fullyAuthenticated()
-                    .antMatchers(HttpMethod.OPTIONS, "/**").permitAll();
+            http.csrf().disable().authorizeRequests()
+            .antMatchers(
+              HttpMethod.GET,
+              "/","/index*","/#/sign-in", "/static/**", "/*.js", "/*.json", "/*.ico")
+              .permitAll()
+            .anyRequest().authenticated()
+            .and()
+            .formLogin().loginPage("/#/sign-in")
+            .loginProcessingUrl("/#/sign-in")
+            .defaultSuccessUrl("/#/sign-in",true)
+            .failureUrl("/#/sign-in?error=true")
+            .and().authorizeRequests()
+            .anyRequest().fullyAuthenticated()
+            .antMatchers(HttpMethod.OPTIONS, "/**").permitAll();
         }
 
     }
