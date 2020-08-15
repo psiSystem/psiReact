@@ -11,7 +11,7 @@ import com.br.psi.model.Shifts;
 
 public interface ShiftsRepositoryService  {
 
-	Boolean findByTimeAvailable(Integer dayOfWeek, Professional professional, LocalDateTime localStart,LocalDateTime localEned, OfficeRoom officeRoom);
+	List<Object> findByTimeAvailable(FilterCalendar filter, Client client);
 
 	List<Shifts> findByProfessionalAndProfessionalFormation(FilterCalendar filter, Client client);
 

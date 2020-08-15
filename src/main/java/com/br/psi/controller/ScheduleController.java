@@ -68,20 +68,18 @@ public class ScheduleController {
 			case 0:
 				createUnique(schedule,listSch);
 				break;
-			case 7:
-				createWeek(schedule,listSch);
-				break;
-			case 14:
-				createBiweekly(schedule,listSch);
-				break;
-			case 28:
-				createMonth(schedule,listSch);
-				break;
 			default:
-				break;
+				createDefault(schedule,listSch);
 			}
 		
 	}
+
+	private void createDefault(Schedule schedule, List<Schedule> list) throws Exception {
+		creatList(schedule,list);
+		this.scheduleRepository.saveAll(list);
+		
+	}
+
 
 	private void creatList(Schedule schedule, List<Schedule> list) throws Exception {
 		Professional professional = professionalRepository.findAllById(schedule.getProfessional().getId());
@@ -121,25 +119,9 @@ public class ScheduleController {
 			}
 
 		if(list.size() <= count)
-			throw new Exception("Paciente "+schedule.getPatient().getPerson().getName()+" não possui créditos disponível.");
+			throw new Exception("Paciente "+schedule.getPatient().getPerson().getName()+" não possui créditos disponível para especialidade "+ professional.getFormation().getName());
 		
 		
-	}
-
-	private void createMonth(Schedule schedule, List<Schedule> list) throws Exception {
-		creatList(schedule,list);
-		this.scheduleRepository.saveAll(list);
-	}
-
-	private void createBiweekly(Schedule schedule, List<Schedule> list) throws Exception {
-		creatList(schedule,list);
-		this.scheduleRepository.saveAll(list);
-		
-	}
-
-	private void createWeek(Schedule schedule, List<Schedule> list) throws Exception {
-		creatList(schedule,list);
-		this.scheduleRepository.saveAll(list);		
 	}
 
 	private void createUnique(Schedule schedule, List<Schedule> list) throws Exception {
@@ -154,7 +136,7 @@ public class ScheduleController {
 					return;
 				}
 		}
-		throw new Exception("Paciente "+schedule.getPatient().getPerson().getName()+" não possui créditos disponível.");
+		throw new Exception("Paciente "+schedule.getPatient().getPerson().getName()+" não possui créditos disponível para especialidade "+ professional.getFormation().getName());
 		
 	}
 

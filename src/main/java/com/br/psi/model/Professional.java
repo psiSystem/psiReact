@@ -28,7 +28,7 @@ public class Professional {
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private Person person;
 	@NotNull(message = "{campo.obrigatorio}")
-	private Long registerProfessional;
+	private String registerProfessional;
 	@Valid
 	@ManyToOne(fetch = FetchType.EAGER)
 	private Formation formation;
@@ -67,11 +67,11 @@ public class Professional {
 		this.person = person;
 	}
 
-	public Long getRegisterProfessional() {
+	public String getRegisterProfessional() {
 		return registerProfessional;
 	}
 
-	public void setRegisterProfessional(Long registerProfessional) {
+	public void setRegisterProfessional(String registerProfessional) {
 		this.registerProfessional = registerProfessional;
 	}
 

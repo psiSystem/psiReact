@@ -3,12 +3,15 @@ package com.br.psi.model;
 import java.util.Date;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
@@ -30,7 +33,9 @@ public class PaymentPatient {
 	@Valid
 	@ManyToOne(fetch = FetchType.EAGER)
 	private Payment payment;
+	@Valid
 	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "patient_id", referencedColumnName = "id")
 	private Patient patient;
 	@ManyToOne(fetch = FetchType.EAGER)
 	private PlanHeath planHealth;
@@ -40,8 +45,10 @@ public class PaymentPatient {
 	@Transient
 	private Integer amountConsumo;
 	private Date createDate;
-	
-	
+	@NotBlank(message = "{campo.obrigatorio}")
+	@Column(length = 8000)
+	private String note;
+
 	public PaymentPatient() {
 		super();
 		this.createDate = new Date();
@@ -150,7 +157,13 @@ public class PaymentPatient {
 	public void setAmountConsumo(Integer amountConsumo) {
 		this.amountConsumo = amountConsumo;
 	}
-	
-	
+
+	public String getNote() {
+		return note;
+	}
+
+	public void setNote(String note) {
+		this.note = note;
+	}
 
 }

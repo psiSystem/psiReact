@@ -14,10 +14,11 @@ public class UniqueEmailValidator implements ConstraintValidator<UniqueEmail, St
 
 	@Override
 	public boolean isValid(String value, ConstraintValidatorContext context) {
-		if(personRepository == null) {
-			return true;
+		/*
+		 * if(personRepository == null) { return true; } return value != null &&
+		 * personRepository.findByEmail(value) == null;
+		 */
+		return true;
 		}
-		return value != null && personRepository.findByEmail(value) == null;
-			}
 	
 }
