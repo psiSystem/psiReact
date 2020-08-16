@@ -3,14 +3,17 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.br.psi.model.Const;
 import com.br.psi.model.FileProfessional;
@@ -51,32 +55,37 @@ public class ProfessionalController {
     @Autowired
     private PermissionRepository permissionRepository;
     
+    @Autowired
+    private HttpServletRequest request;
+
     @SuppressWarnings("resource")
 	@Secured({Const.ROLE_ADMIN})
-    @RequestMapping(value = "/professional/saveFile", method = RequestMethod.POST)
+    @RequestMapping(value = "/professional/saveFile", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<FileProfessional> saveFile(
-    		@RequestParam(value = "file", required = true) File file,
+    		@RequestParam(value = "file", required = true) MultipartFile file,
     		@RequestParam(value = "name", required = true) String name,
     		@RequestParam(value = "professional", required = true) Long professional
     		){
+    	
+    	 String uploadsDir = "/uploads/";
+         String realPathtoUploads =  request.getServletContext().getRealPath(uploadsDir);
+			if (!new File(realPathtoUploads).exists()) {
+				new File(realPathtoUploads).mkdir();
+			}
+         
     	FileProfessional fileProfessional = new FileProfessional();
     	User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     	
-    	File newFile = new File("C:/var/file/"+user.getPerson().getClient().getId()+"/");
-    	FileChannel sourceChannel = null;
-        FileChannel destinationChannel = null;
-
-    	if(!newFile.exists())
-    		newFile.mkdir();
     	
     	try {
-    	sourceChannel = new FileInputStream(file).getChannel();
-        destinationChannel = new FileOutputStream(newFile).getChannel();
-        sourceChannel.transferTo(0, sourceChannel.size(),destinationChannel);
-		
+    	String orgName = file.getOriginalFilename();
+        String filePath = realPathtoUploads + orgName;
+        File dest = new File(filePath);
+        file.transferTo(dest);
+        
     	fileProfessional.setProfessional(professionalRepository.findAllById(professional));
     	fileProfessional.setName(name);
-    	fileProfessional.setPath(newFile.getPath());
+    	fileProfessional.setPath(dest.getPath());
     	} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
