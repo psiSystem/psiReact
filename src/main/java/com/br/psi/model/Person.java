@@ -41,10 +41,8 @@ public class Person {
 	@NotBlank(message = "{campo.obrigatorio}")
 	@Email
 	@Column(nullable = false, unique = true)
-	@UniqueEmail(message = "{email.cadastrado}")
 	private String email;
 	@NotBlank(message = "{campo.obrigatorio}")
-	@UniqueCpf(message = "{cpf.cadastrado}")
 	@Column(nullable = false, unique = true)
 	private String cpf;
 	@Column(nullable = false)

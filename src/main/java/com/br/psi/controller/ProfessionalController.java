@@ -1,4 +1,9 @@
 package com.br.psi.controller;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,9 +18,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.br.psi.model.Const;
+import com.br.psi.model.FileProfessional;
 import com.br.psi.model.Permission;
 import com.br.psi.model.Professional;
 import com.br.psi.model.Status;
@@ -43,6 +50,39 @@ public class ProfessionalController {
     
     @Autowired
     private PermissionRepository permissionRepository;
+    
+    @SuppressWarnings("resource")
+	@Secured({Const.ROLE_ADMIN})
+    @RequestMapping(value = "/professional/saveFile", method = RequestMethod.POST)
+    public ResponseEntity<FileProfessional> saveFile(
+    		@RequestParam(value = "file", required = true) File file,
+    		@RequestParam(value = "name", required = true) String name,
+    		@RequestParam(value = "professional", required = true) Long professional
+    		){
+    	FileProfessional fileProfessional = new FileProfessional();
+    	User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    	
+    	File newFile = new File("C:/var/file/"+user.getPerson().getClient().getId()+"/");
+    	FileChannel sourceChannel = null;
+        FileChannel destinationChannel = null;
+
+    	if(!newFile.exists())
+    		newFile.mkdir();
+    	
+    	try {
+    	sourceChannel = new FileInputStream(file).getChannel();
+        destinationChannel = new FileOutputStream(newFile).getChannel();
+        sourceChannel.transferTo(0, sourceChannel.size(),destinationChannel);
+		
+    	fileProfessional.setProfessional(professionalRepository.findAllById(professional));
+    	fileProfessional.setName(name);
+    	fileProfessional.setPath(newFile.getPath());
+    	} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        return new ResponseEntity<FileProfessional>(fileProfessional, HttpStatus.CREATED);
+    }
     
     @Secured({Const.ROLE_ADMIN})
     @RequestMapping(value = "/professional/save", method = RequestMethod.POST)
