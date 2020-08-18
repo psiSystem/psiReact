@@ -13,13 +13,13 @@ import javax.persistence.Transient;
 import javax.validation.constraints.NotBlank;
 
 @Entity
-public class FileProfessional {
+public class FilePatient {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	@ManyToOne(fetch = FetchType.EAGER)
-	private Professional professional;
+	private Patient patient;
 	@NotBlank(message = "{campo.obrigatorio}")
 	private String path;
 	private String description;
@@ -37,15 +37,7 @@ public class FileProfessional {
 		this.contentType = contentType;
 	}
 
-	public Long getSize() {
-		return size / 1024;
-	}
-
-	public void setSize(Long size) {
-		this.size = size;
-	}
-
-	public FileProfessional() {
+	public FilePatient() {
 		super();
 		this.createDate = new Date();
 	}
@@ -66,12 +58,12 @@ public class FileProfessional {
 		this.id = id;
 	}
 
-	public Professional getProfessional() {
-		return professional;
+	public Patient getPatient() {
+		return patient;
 	}
 
-	public void setProfessional(Professional professional) {
-		this.professional = professional;
+	public void setPatient(Patient patient) {
+		this.patient = patient;
 	}
 
 	public String getPath() {
@@ -96,6 +88,14 @@ public class FileProfessional {
 
 	public void setFile(File file) {
 		this.file = file;
+	}
+
+	public Long getSize() {
+		return size / 1024;
+	}
+
+	public void setSize(Long size) {
+		this.size = size;
 	}
 
 }

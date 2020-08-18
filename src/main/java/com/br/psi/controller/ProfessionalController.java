@@ -55,45 +55,7 @@ public class ProfessionalController {
     @Autowired
     private PermissionRepository permissionRepository;
     
-    @Autowired
-    private HttpServletRequest request;
-
-    @SuppressWarnings("resource")
-	@Secured({Const.ROLE_ADMIN})
-    @RequestMapping(value = "/professional/saveFile", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<FileProfessional> saveFile(
-    		@RequestParam(value = "file", required = true) MultipartFile file,
-    		@RequestParam(value = "name", required = true) String name,
-    		@RequestParam(value = "professional", required = true) Long professional
-    		){
-    	
-    	 String uploadsDir = "/uploads/";
-         String realPathtoUploads =  request.getServletContext().getRealPath(uploadsDir);
-			if (!new File(realPathtoUploads).exists()) {
-				new File(realPathtoUploads).mkdir();
-			}
-         
-    	FileProfessional fileProfessional = new FileProfessional();
-    	User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-    	
-    	
-    	try {
-    	String orgName = file.getOriginalFilename();
-        String filePath = realPathtoUploads + orgName;
-        File dest = new File(filePath);
-        file.transferTo(dest);
-        
-    	fileProfessional.setProfessional(professionalRepository.findAllById(professional));
-    	fileProfessional.setName(name);
-    	fileProfessional.setPath(dest.getPath());
-    	} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-        return new ResponseEntity<FileProfessional>(fileProfessional, HttpStatus.CREATED);
-    }
-    
-    @Secured({Const.ROLE_ADMIN})
+    @Secured({Const.ROLE_CLIENT, Const.ROLE_ADMIN})
     @RequestMapping(value = "/professional/save", method = RequestMethod.POST)
     public ResponseEntity<Professional> save(@RequestBody @Valid Professional professional){
     	
@@ -115,7 +77,7 @@ public class ProfessionalController {
         return new ResponseEntity<Professional>(professional, HttpStatus.CREATED);
     }
 
-    @Secured({Const.ROLE_ADMIN})
+    @Secured({Const.ROLE_CLIENT, Const.ROLE_ADMIN})
     @RequestMapping(value = "/professional/edit", method = RequestMethod.PUT)
     public ResponseEntity<Professional> edit(@RequestBody Professional professional){
         this.professionalRepository.save(professional);
