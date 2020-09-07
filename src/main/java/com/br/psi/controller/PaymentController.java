@@ -15,7 +15,7 @@ import com.br.psi.model.Payment;
 import com.br.psi.repository.PaymentRepository;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping
 public class PaymentController {
 
     @Autowired

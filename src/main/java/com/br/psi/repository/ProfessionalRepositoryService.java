@@ -2,6 +2,7 @@ package com.br.psi.repository;
 
 import java.util.List;
 
+import com.br.psi.dto.FinanceProfessional;
 import com.br.psi.model.Client;
 import com.br.psi.model.Person;
 import com.br.psi.model.Professional;
@@ -13,6 +14,8 @@ public interface ProfessionalRepositoryService  {
 	Professional findByPerson(Person person);
 	
 	List<Professional> findByPersonClientAndPersonName(Client client, String name);
+	
+	List<FinanceProfessional> findAllByFinanceProfessional(FinanceProfessional financeProfessional);
 
 
 }

@@ -30,7 +30,7 @@ import com.br.psi.repository.ShiftsRepository;
 import com.br.psi.repository.ShiftsRepositoryService;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping
 public class ShiftsController {
 
     @Autowired

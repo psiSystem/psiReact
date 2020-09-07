@@ -25,19 +25,22 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.br.psi.dto.FinanceProfessional;
 import com.br.psi.model.Const;
 import com.br.psi.model.FileProfessional;
 import com.br.psi.model.Permission;
 import com.br.psi.model.Professional;
+import com.br.psi.model.RecordMedical;
 import com.br.psi.model.Status;
 import com.br.psi.model.User;
 import com.br.psi.repository.PermissionRepository;
 import com.br.psi.repository.ProfessionalRepository;
 import com.br.psi.repository.ProfessionalRepositoryService;
+import com.br.psi.repository.RecordMedicalRepository;
 import com.br.psi.repository.UserRepository;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping
 public class ProfessionalController {
 
     @Autowired
@@ -54,6 +57,9 @@ public class ProfessionalController {
     
     @Autowired
     private PermissionRepository permissionRepository;
+    
+    @Autowired
+    private RecordMedicalRepository recordMedicalRepository;
     
     @Secured({Const.ROLE_CLIENT, Const.ROLE_ADMIN})
     @RequestMapping(value = "/professional/save", method = RequestMethod.POST)
@@ -103,5 +109,50 @@ public class ProfessionalController {
         return new ResponseEntity<List<Professional>>(list, HttpStatus.OK);
     }
     
+    
+    @Secured({Const.ROLE_ADMIN,Const.ROLE_PRFESSIONAL})
+    @RequestMapping(value = "/professional/saveRecordMedical", method = RequestMethod.POST)
+    public ResponseEntity<RecordMedical> saveRecordMedical(@RequestBody @Valid RecordMedical recordMedical){
+    	User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    	recordMedical.setProfessional(professionalRepository.findByPerson(user.getPerson()));
+    	recordMedicalRepository.save(recordMedical);	
+    	
+      return new ResponseEntity<RecordMedical>(recordMedical, HttpStatus.OK);	
+    }
+    
+    @Secured({Const.ROLE_ADMIN,Const.ROLE_PRFESSIONAL})
+    @RequestMapping(value = "/professional/deleteRecordMedical", method = RequestMethod.POST)
+    public ResponseEntity deleteRecordMedical(@RequestBody RecordMedical recordMedical){
+    	
+    	recordMedicalRepository.delete(recordMedical);	
+    	
+      return new ResponseEntity<>( HttpStatus.OK);	
+    }
+    
+    
+    @Secured({Const.ROLE_ADMIN,Const.ROLE_PRFESSIONAL})
+    @RequestMapping(value = "/professional/findAllRecordMedical", method = RequestMethod.POST)
+    public ResponseEntity<List<RecordMedical>> findAllRecordMedical(@RequestBody RecordMedical recordMedical){
+    	User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    	Professional professional = professionalRepository.findByPerson(user.getPerson());;
+    	
+    	List<RecordMedical> listRecordMedical = recordMedicalRepository.findAllByProfessionalAndPatient(professional,recordMedical.getPatient());
+    	
+    	
+      return new ResponseEntity<List<RecordMedical>>(listRecordMedical, HttpStatus.OK);	
+    }
+    
+    @Secured({Const.ROLE_ADMIN,Const.ROLE_PRFESSIONAL,Const.ROLE_CLIENT})
+    @RequestMapping(value = "/professional/findAllByFinanceProfessional", method = RequestMethod.POST)
+    public ResponseEntity<List<FinanceProfessional>> findAllByFinanceProfessional(@RequestBody FinanceProfessional financeProfessional){
+    	User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    	financeProfessional.setClient(user.getPerson().getClient());
+    	if(financeProfessional.getProfessional() == null)
+    		financeProfessional.setProfessional(professionalRepository.findByPerson(user.getPerson()));
+    	 
+    	List<FinanceProfessional> listFinanceProfessional = professionalRepositoryService.findAllByFinanceProfessional(financeProfessional);
+    	
+      return new ResponseEntity<List<FinanceProfessional>>(listFinanceProfessional, HttpStatus.OK);	
+    }
 
 }

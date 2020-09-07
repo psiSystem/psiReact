@@ -22,7 +22,7 @@ import com.br.psi.repository.OfficeRoomRepository;
 import com.br.psi.repository.ShiftsRepository;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping
 public class OfficeRoomController {
 
 

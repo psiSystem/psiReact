@@ -45,10 +45,11 @@ public class PaymentPatient {
 	@Transient
 	private Integer amountConsumo;
 	private Date createDate;
-	@NotBlank(message = "{campo.obrigatorio}")
-	@Column(length = 8000)
+	@Column(length = 8000, nullable = true)
 	private String note;
-
+	@ManyToOne(fetch = FetchType.EAGER)
+	private Specialty specialty;
+	
 	public PaymentPatient() {
 		super();
 		this.createDate = new Date();
@@ -166,4 +167,13 @@ public class PaymentPatient {
 		this.note = note;
 	}
 
+	public Specialty getSpecialty() {
+		return specialty;
+	}
+
+	public void setSpecialty(Specialty specialty) {
+		this.specialty = specialty;
+	}
+
+	
 }

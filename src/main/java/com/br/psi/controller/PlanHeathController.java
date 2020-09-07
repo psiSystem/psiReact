@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.br.psi.model.Const;
 import com.br.psi.model.Formation;
+import com.br.psi.model.PaymentPatient;
 import com.br.psi.model.PlanHeath;
 import com.br.psi.model.PlanHeathClient;
 import com.br.psi.model.User;
@@ -21,7 +22,7 @@ import com.br.psi.repository.PlanHeathClientRepository;
 import com.br.psi.repository.PlanHeathRepository;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping
 public class PlanHeathController {
 
     @Autowired
@@ -46,6 +47,7 @@ public class PlanHeathController {
     	User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return new ResponseEntity<List<PlanHeathClient>>(planHeathClientRepository.findAllByClient(user.getPerson().getClient()), HttpStatus.OK);
     }
+    
     @Secured({Const.ROLE_ADMIN})
     @RequestMapping(value = "/planHeathClient/delete", method = RequestMethod.POST)
     public ResponseEntity delete(@RequestBody PlanHeathClient planHeathClient ){
@@ -70,6 +72,34 @@ public class PlanHeathController {
     	List<PlanHeath> list1 = new ArrayList<PlanHeath>();
     	plansClient.forEach(plan->{
     		list1.add(plan.getPlanHeath());
+    	});
+    	
+    	list.removeIf(p-> !list1.contains(p));
+    	
+        return new ResponseEntity<List<PlanHeath>>(list, HttpStatus.OK);
+    }
+    
+    
+    @Secured({Const.ROLE_CLIENT, Const.ROLE_ADMIN,Const.ROLE_PRFESSIONAL})
+    @RequestMapping(value = "/planHeathClient/findAllByFormation", method = RequestMethod.POST)
+    public ResponseEntity<List<PlanHeath>> findAllByFormation(@RequestBody PaymentPatient paymentPatient){
+    	User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    	List<PlanHeath> list = planHeathRepository.findAll(user.getPerson().getClient());
+    	List<PlanHeathClient> plansClient = planHeathClientRepository.findAllByClientAndFormation(user.getPerson().getClient(),paymentPatient.getFormation());
+    	List<PlanHeath> list1 = new ArrayList<PlanHeath>();
+    	plansClient.forEach(plan->{
+    		if(paymentPatient.getSpecialty() != null && paymentPatient.getSpecialty().getId() != null) {
+    			plan.getPlanHeathClientSpecialty().forEach(action ->{
+    				if(action.getId() == paymentPatient.getSpecialty().getId()) {
+    					list1.add(plan.getPlanHeath());
+    					
+    				}
+    			});
+    			
+    		}else {
+    			if(plan.getPlanHeathClientSpecialty()== null || plan.getPlanHeathClientSpecialty().isEmpty())
+    				list1.add(plan.getPlanHeath());
+    		}
     	});
     	
     	list.removeIf(p-> !list1.contains(p));

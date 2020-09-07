@@ -31,7 +31,7 @@ import com.br.psi.repository.ScheduleRepository;
 import com.br.psi.repository.ShiftsRepository;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping
 public class ScheduleController {
 
     @Autowired

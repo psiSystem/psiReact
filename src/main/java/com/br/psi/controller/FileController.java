@@ -1,18 +1,16 @@
 package com.br.psi.controller;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URLDecoder;
+import java.net.URLConnection;
+import java.time.LocalDate;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
-import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -25,7 +23,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import com.br.psi.model.Const;
 import com.br.psi.model.FilePatient;
@@ -39,9 +36,9 @@ import com.br.psi.repository.PatientRepository;
 import com.br.psi.repository.ProfessionalRepository;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping
 public class FileController {
-
+	private static final String path = "/uploads/";
     @Autowired
     private ProfessionalRepository professionalRepository;
     
@@ -55,8 +52,8 @@ public class FileController {
     private FilePatientRepository filePatientRepository;
     
     @Autowired
-    private HttpServletRequest request;
-
+    private ServletContext servletContext;
+    
     @SuppressWarnings("resource")
 	@Secured({Const.ROLE_CLIENT, Const.ROLE_ADMIN})
     @RequestMapping(value = "/file/saveProfessionalFile", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -66,8 +63,7 @@ public class FileController {
     		@RequestParam(value = "professional", required = true) Long professional
     		) throws  IOException{
     	User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-    	 String uploadsDir = "/uploads/";
-    	 String realPathtoUploads =  request.getServletContext().getRealPath(uploadsDir);
+    	 String realPathtoUploads =  path;
     	 
     	 if (!new File(realPathtoUploads).exists()) {
     		 new File(realPathtoUploads).mkdir();
@@ -89,9 +85,9 @@ public class FileController {
     	FileProfessional fileProfessional = new FileProfessional();
     	
     	
-    	
+    	LocalDate now = LocalDate.now();
     	String orgName = file.getOriginalFilename();
-        String filePath = realPathtoUploads + orgName;
+        String filePath = realPathtoUploads + now+ orgName ;
         File dest = new File(filePath);
         file.transferTo(dest);
         
@@ -114,8 +110,7 @@ public class FileController {
     		@RequestParam(value = "patient", required = true) Long id
     		) throws  IOException{
     	User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-    	String uploadsDir = "/uploads/"+user.getPerson().getClient().getId()+"/paciente/";
-         String realPathtoUploads =  request.getServletContext().getRealPath(uploadsDir);
+         String realPathtoUploads =  path;
          
     	 if (!new File(realPathtoUploads).exists()) {
     		 new File(realPathtoUploads).mkdir();
@@ -138,9 +133,9 @@ public class FileController {
     	FilePatient filePatient = new FilePatient();
     	
     	
-    	
+    	LocalDate now = LocalDate.now();
     	String orgName = file.getOriginalFilename();
-        String filePath = realPathtoUploads + orgName;
+        String filePath = realPathtoUploads + now + orgName;
         File dest = new File(filePath);
         file.transferTo(dest);
         filePatient.setPatient(ratientRepository.findAllById(id));
@@ -186,22 +181,49 @@ public class FileController {
     
     @Secured({Const.ROLE_CLIENT, Const.ROLE_ADMIN})
     @RequestMapping(value = "/file/download", method = RequestMethod.POST)
-    public StreamingResponseBody download(HttpServletResponse response, @RequestBody FileProfessional fileProfessional) throws FileNotFoundException{
+    public ResponseEntity<InputStreamResource>  download(HttpServletResponse response, @RequestBody FileProfessional fileProfessional) throws IOException{
     	File file = new File(fileProfessional.getPath());
-    	response.setContentType(fileProfessional.getContentType());
-        response.setHeader(
-            HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=\"" + file.getName() + "\"");
+    	if (file.exists()) {
 
-        FileInputStream fileInputStream = new FileInputStream(file);
+			String mimeType = URLConnection.guessContentTypeFromName(file.getName());
+			if (mimeType == null) {
+				mimeType = "application/octet-stream";
+			}
 
-        return outputStream -> {
-            int bytesRead;
-            byte[] buffer = new byte[4000];
-            InputStream inputStream = fileInputStream;
-            while ((bytesRead = inputStream.read(buffer)) != -1) {
-                outputStream.write(buffer, 0, bytesRead);
-            }
-        };
-	}
+			InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
+			
+			return (ResponseEntity<InputStreamResource>) ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=" + file.getName()).contentType(getMediaTypeForFileName(this.servletContext, mimeType)).contentLength(file.length()).body(resource);
+		}
+
+    	return null;
+    }
+    
+    @Secured({Const.ROLE_CLIENT, Const.ROLE_ADMIN})
+    @RequestMapping(value = "/file/downloadPatient", method = RequestMethod.POST)
+    public ResponseEntity<InputStreamResource>  downloadPatient(HttpServletResponse response, @RequestBody FilePatient filePatient) throws IOException{
+    	File file = new File(filePatient.getPath());
+    	if (file.exists()) {
+
+			String mimeType = URLConnection.guessContentTypeFromName(file.getName());
+			if (mimeType == null) {
+				mimeType = "application/octet-stream";
+			}
+
+			InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
+			
+			return (ResponseEntity<InputStreamResource>) ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=" + file.getName()).contentType(getMediaTypeForFileName(this.servletContext, mimeType)).contentLength(file.length()).body(resource);
+		}
+
+    	return null;
+    }
+    
+    public static MediaType getMediaTypeForFileName(ServletContext servletContext, String mineType) {
+        try {
+            MediaType mediaType = MediaType.parseMediaType(mineType);
+            return mediaType;
+        } catch (Exception e) {
+            return MediaType.APPLICATION_OCTET_STREAM;
+        }
+    }
     
 }

@@ -1,13 +1,17 @@
 package com.br.psi.repository.dao;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
 
+import com.br.psi.dto.FinanceProfessional;
 import com.br.psi.model.Client;
 import com.br.psi.model.Person;
 import com.br.psi.model.Professional;
@@ -40,6 +44,69 @@ public class ProfessionalRepositoryDao implements ProfessionalRepositoryService,
 				+ " inner join person pe on pe.id = p.person_id"
 				+ " inner join person_client cp on cp.person_id = pe.id"
 				+ " where pe.name like :name and cp.client_id =:client",Professional.class).setParameter("client", client.getId()).setParameter("name", "%"+name+"%")
+				.getResultList();
+		return resultList; 
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<FinanceProfessional> findAllByFinanceProfessional(FinanceProfessional financeProfessional) {
+		
+		List<FinanceProfessional>  resultList = entityManager.createNativeQuery(
+				" SELECT count(sc.id) AS amount,\r\n" + 
+				"       count(sc.id) * isnull((pp.value / pp.amount),phc.value) AS grossAmount,\r\n" + 
+				"       pr.name professionalName,\r\n" + 
+				"       prt.name AS patientName,\r\n" + 
+				"       ph.description planHeath,\r\n" + 
+				"       pay.name AS payment,\r\n" + 
+				"	   s.name specialty,\r\n" + 
+				"       isnull(phc.value, pp.value / pp.amount) valuePlan,\r\n" + 
+				"       min(sc.date_start) dateStart,\r\n" + 
+				"       max(sc.date_end) dateEnd\r\n" + 
+				"FROM professional p\r\n" + 
+				"INNER JOIN person pr ON pr.id = p.person_id\r\n" + 
+				"INNER JOIN person_client pc ON pc.person_id = pr.id\r\n" + 
+				"INNER JOIN schedule sc ON sc.professional_id = p.id\r\n" + 
+				"INNER JOIN payment_patient pp ON pp.id = sc.payment_patient_id \r\n" + 
+				"left join specialty s on s.id = pp.specialty_id\r\n" + 
+				"INNER JOIN patient pt ON pt.id = pp.patient_id\r\n" + 
+				"INNER JOIN person prt ON prt.id = pt.person_id\r\n" + 
+				"LEFT JOIN plan_heath ph ON ph.id = pp.plan_health_id\r\n" + 
+				"outer apply (\r\n" + 
+				"select phc.* from  plan_heath_client phc \r\n" + 
+				"inner join specialty_plan_heath_client sphc on sphc.specialty_plan_heath_client_id = phc.id and sphc.specialty_id = pp.specialty_id\r\n" + 
+				"where phc.plan_heath_id = pp.plan_health_id\r\n" + 
+				"AND phc.client_id = pc.client_id\r\n" + 
+				"AND phc.formation_id = p.formation_id\r\n" + 
+				"union all\r\n" + 
+				"select phc.* from  plan_heath_client phc \r\n" + 
+				"where phc.plan_heath_id = pp.plan_health_id\r\n" + 
+				"AND phc.client_id = pc.client_id\r\n" + 
+				"AND phc.formation_id = p.formation_id\r\n" + 
+				"and not exists (select * from specialty_plan_heath_client sphc where sphc.specialty_plan_heath_client_id = phc.id)\r\n" + 
+				"\r\n" + 
+				") phc\r\n" + 
+				"\r\n" + 
+				"INNER JOIN payment pay ON pay.id = pp.payment_id\r\n" + 
+				"WHERE sc.date_start <= GETDATE()\r\n" + 
+				"and pc.client_id = isnull(:client,pc.client_id)\r\n" + 
+				"and p.id = isnull(:professional,p.id)\r\n" + 
+				"and sc.date_start >= isnull(:dateStart,sc.date_start)\r\n" + 
+				"and sc.date_start <= :dateEnd\r\n" + 
+				"GROUP BY prt.name,\r\n" + 
+				"         pr.name,\r\n" + 
+				"         pp.value,\r\n" + 
+				"         pp.amount,\r\n" + 
+				"         ph.description,\r\n" + 
+				"         pay.name,\r\n" + 
+				"		 s.name,\r\n" + 
+				"         phc.value")
+				.setParameter("client", financeProfessional.getClient().getId())
+				.setParameter("professional", financeProfessional.getProfessional() != null ? financeProfessional.getProfessional().getId() : null)
+				.setParameter("dateStart", financeProfessional.getDateStart() != null ? financeProfessional.getDateStart() : LocalDateTime.now().plusDays(-90))
+				.setParameter("dateEnd", financeProfessional.getDateEnd() != null ? financeProfessional.getDateEnd() : new Date())
+				.unwrap(org.hibernate.query.Query.class)
+				.setResultTransformer(Transformers.aliasToBean(FinanceProfessional.class))
 				.getResultList();
 		return resultList; 
 	}
