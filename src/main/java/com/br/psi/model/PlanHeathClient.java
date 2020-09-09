@@ -26,12 +26,12 @@ public class PlanHeathClient {
 	private Formation formation;
 	private Double value;
 	private Date createDate;
-	private String code;
+	@ManyToOne(fetch = FetchType.EAGER)
+	private PlanCode planCode;
 	@ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name="specialty_plan_heath_client", joinColumns = @JoinColumn(name="specialty_plan_heath_client_id"), inverseJoinColumns = @JoinColumn(name="specialty_id")
-    )
-    private List<Specialty> planHeathClientSpecialty;
-	
+	@JoinTable(name = "professional_plan_heath_client", joinColumns = @JoinColumn(name = "plan_heath_client_id"), inverseJoinColumns = @JoinColumn(name = "specialty_id"))
+	private List<Professional> professionalPlanHeathClient;
+
 	public PlanHeathClient() {
 		super();
 		this.createDate = new Date();
@@ -44,6 +44,7 @@ public class PlanHeathClient {
 	public void setCreateDate(Date createDate) {
 		this.createDate = createDate;
 	}
+
 	public Long getId() {
 		return id;
 	}
@@ -84,21 +85,20 @@ public class PlanHeathClient {
 		this.formation = formation;
 	}
 
-	public String getCode() {
-		return code;
+	public PlanCode getPlanCode() {
+		return planCode;
 	}
 
-	public void setCode(String code) {
-		this.code = code;
+	public void setPlanCode(PlanCode planCode) {
+		this.planCode = planCode;
 	}
 
-	public List<Specialty> getPlanHeathClientSpecialty() {
-		return planHeathClientSpecialty;
+	public List<Professional> getProfessionalPlanHeathClient() {
+		return professionalPlanHeathClient;
 	}
 
-	public void setPlanHeathClientSpecialty(List<Specialty> planHeathClientSpecialty) {
-		this.planHeathClientSpecialty = planHeathClientSpecialty;
+	public void setProfessionalPlanHeathClient(List<Professional> professionalPlanHeathClient) {
+		this.professionalPlanHeathClient = professionalPlanHeathClient;
 	}
 
-	
 }

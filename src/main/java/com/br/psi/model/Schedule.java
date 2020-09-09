@@ -29,6 +29,8 @@ public class Schedule {
 	@ManyToOne(fetch = FetchType.EAGER)
 	private OfficeRoom officeRoom;
 	private Date createDate;
+	@ManyToOne(fetch = FetchType.EAGER)
+	private PlanCode planCode;
 
 	public Schedule() {
 		super();
@@ -114,5 +116,15 @@ public class Schedule {
 	public void setOfficeRoom(OfficeRoom officeRoom) {
 		this.officeRoom = officeRoom;
 	}
+
+	public PlanCode getPlanCode() {
+		return planCode;
+	}
+
+	public void setPlanCode(PlanCode planCode) {
+		this.planCode = planCode;
+	}
+	
+	
 
 }

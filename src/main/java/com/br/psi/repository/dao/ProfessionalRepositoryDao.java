@@ -59,8 +59,7 @@ public class ProfessionalRepositoryDao implements ProfessionalRepositoryService,
 				"       prt.name AS patientName,\r\n" + 
 				"       ph.description planHeath,\r\n" + 
 				"       pay.name AS payment,\r\n" + 
-				"	   s.name specialty,\r\n" + 
-				"       isnull(phc.value, pp.value / pp.amount) valuePlan,\r\n" + 
+				"	   isnull(phc.value, pp.value / pp.amount) valuePlan,\r\n" + 
 				"       min(sc.date_start) dateStart,\r\n" + 
 				"       max(sc.date_end) dateEnd\r\n" + 
 				"FROM professional p\r\n" + 
@@ -68,25 +67,13 @@ public class ProfessionalRepositoryDao implements ProfessionalRepositoryService,
 				"INNER JOIN person_client pc ON pc.person_id = pr.id\r\n" + 
 				"INNER JOIN schedule sc ON sc.professional_id = p.id\r\n" + 
 				"INNER JOIN payment_patient pp ON pp.id = sc.payment_patient_id \r\n" + 
-				"left join specialty s on s.id = pp.specialty_id\r\n" + 
 				"INNER JOIN patient pt ON pt.id = pp.patient_id\r\n" + 
 				"INNER JOIN person prt ON prt.id = pt.person_id\r\n" + 
 				"LEFT JOIN plan_heath ph ON ph.id = pp.plan_health_id\r\n" + 
-				"outer apply (\r\n" + 
-				"select phc.* from  plan_heath_client phc \r\n" + 
-				"inner join specialty_plan_heath_client sphc on sphc.specialty_plan_heath_client_id = phc.id and sphc.specialty_id = pp.specialty_id\r\n" + 
-				"where phc.plan_heath_id = pp.plan_health_id\r\n" + 
+				"left join  plan_heath_client phc on phc.plan_heath_id = pp.plan_health_id\r\n" + 
 				"AND phc.client_id = pc.client_id\r\n" + 
 				"AND phc.formation_id = p.formation_id\r\n" + 
-				"union all\r\n" + 
-				"select phc.* from  plan_heath_client phc \r\n" + 
-				"where phc.plan_heath_id = pp.plan_health_id\r\n" + 
-				"AND phc.client_id = pc.client_id\r\n" + 
-				"AND phc.formation_id = p.formation_id\r\n" + 
-				"and not exists (select * from specialty_plan_heath_client sphc where sphc.specialty_plan_heath_client_id = phc.id)\r\n" + 
-				"\r\n" + 
-				") phc\r\n" + 
-				"\r\n" + 
+				"and phc.plan_code_id = sc.plan_code_id\r\n" + 
 				"INNER JOIN payment pay ON pay.id = pp.payment_id\r\n" + 
 				"WHERE sc.date_start <= GETDATE()\r\n" + 
 				"and pc.client_id = isnull(:client,pc.client_id)\r\n" + 
@@ -99,7 +86,6 @@ public class ProfessionalRepositoryDao implements ProfessionalRepositoryService,
 				"         pp.amount,\r\n" + 
 				"         ph.description,\r\n" + 
 				"         pay.name,\r\n" + 
-				"		 s.name,\r\n" + 
 				"         phc.value")
 				.setParameter("client", financeProfessional.getClient().getId())
 				.setParameter("professional", financeProfessional.getProfessional() != null ? financeProfessional.getProfessional().getId() : null)

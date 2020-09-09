@@ -16,7 +16,7 @@ public class FinanceProfessional {
 	private Double valuePlan;
 	private Date dateStart;
 	private Date dateEnd;
-	private String specialty;
+	
 
 	private Client client;
 	private Professional professional;
@@ -109,12 +109,5 @@ public class FinanceProfessional {
 		this.professional = professional;
 	}
 
-	public String getSpecialty() {
-		return specialty;
-	}
-
-	public void setSpecialty(String specialty) {
-		this.specialty = specialty;
-	}
 
 }

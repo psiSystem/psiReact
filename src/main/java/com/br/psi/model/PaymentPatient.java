@@ -47,8 +47,6 @@ public class PaymentPatient {
 	private Date createDate;
 	@Column(length = 8000, nullable = true)
 	private String note;
-	@ManyToOne(fetch = FetchType.EAGER)
-	private Specialty specialty;
 	
 	public PaymentPatient() {
 		super();
@@ -166,14 +164,5 @@ public class PaymentPatient {
 	public void setNote(String note) {
 		this.note = note;
 	}
-
-	public Specialty getSpecialty() {
-		return specialty;
-	}
-
-	public void setSpecialty(Specialty specialty) {
-		this.specialty = specialty;
-	}
-
 	
 }

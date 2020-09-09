@@ -15,9 +15,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.br.psi.model.Const;
 import com.br.psi.model.Formation;
 import com.br.psi.model.PaymentPatient;
+import com.br.psi.model.PlanCode;
 import com.br.psi.model.PlanHeath;
 import com.br.psi.model.PlanHeathClient;
 import com.br.psi.model.User;
+import com.br.psi.repository.PlanCodeRepository;
 import com.br.psi.repository.PlanHeathClientRepository;
 import com.br.psi.repository.PlanHeathRepository;
 
@@ -29,8 +31,10 @@ public class PlanHeathController {
     private PlanHeathRepository planHeathRepository;
     @Autowired
     private PlanHeathClientRepository planHeathClientRepository;
-
-    @Secured({Const.ROLE_ADMIN})
+    @Autowired
+    private PlanCodeRepository planCodeRepository;
+    
+    @Secured({Const.ROLE_ADMIN,Const.ROLE_CLIENT})
     @RequestMapping(value = "/planHeathClient/save", method = RequestMethod.POST)
     public ResponseEntity<List<PlanHeathClient>> save(@RequestBody PlanHeathClient planHeathClient){
     	User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -41,14 +45,20 @@ public class PlanHeathController {
     	 
         return new ResponseEntity<List<PlanHeathClient>>(planHeathClientRepository.findAllByClient(user.getPerson().getClient()), HttpStatus.OK);
     }
-    @Secured({Const.ROLE_ADMIN})
+    @Secured({Const.ROLE_ADMIN,Const.ROLE_CLIENT})
     @RequestMapping(value = "/planHeathClient/findAll", method = RequestMethod.GET)
     public ResponseEntity<List<PlanHeathClient>> listPlanHeathClient(){
     	User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return new ResponseEntity<List<PlanHeathClient>>(planHeathClientRepository.findAllByClient(user.getPerson().getClient()), HttpStatus.OK);
     }
     
-    @Secured({Const.ROLE_ADMIN})
+    @Secured({Const.ROLE_ADMIN,Const.ROLE_CLIENT})
+    @RequestMapping(value = "/planHeath/findAllPlanCode", method = RequestMethod.GET)
+    public ResponseEntity<List<PlanCode>> findAllPlanCode(){
+        return new ResponseEntity<List<PlanCode>>(planCodeRepository.findAll(), HttpStatus.OK);
+    }
+    
+    @Secured({Const.ROLE_ADMIN,Const.ROLE_CLIENT})
     @RequestMapping(value = "/planHeathClient/delete", method = RequestMethod.POST)
     public ResponseEntity delete(@RequestBody PlanHeathClient planHeathClient ){
     		planHeathClientRepository.delete(planHeathClient);
@@ -56,7 +66,7 @@ public class PlanHeathController {
     }
 
     
-    @Secured({Const.ROLE_ADMIN})
+    @Secured({Const.ROLE_ADMIN,Const.ROLE_CLIENT})
     @RequestMapping(value = "/planHeath/edit", method = RequestMethod.PUT)
     public ResponseEntity<PlanHeath> edit(@RequestBody PlanHeath planHeath){
         this.planHeathRepository.save(planHeath);
@@ -88,18 +98,7 @@ public class PlanHeathController {
     	List<PlanHeathClient> plansClient = planHeathClientRepository.findAllByClientAndFormation(user.getPerson().getClient(),paymentPatient.getFormation());
     	List<PlanHeath> list1 = new ArrayList<PlanHeath>();
     	plansClient.forEach(plan->{
-    		if(paymentPatient.getSpecialty() != null && paymentPatient.getSpecialty().getId() != null) {
-    			plan.getPlanHeathClientSpecialty().forEach(action ->{
-    				if(action.getId() == paymentPatient.getSpecialty().getId()) {
-    					list1.add(plan.getPlanHeath());
-    					
-    				}
-    			});
-    			
-    		}else {
-    			if(plan.getPlanHeathClientSpecialty()== null || plan.getPlanHeathClientSpecialty().isEmpty())
-    				list1.add(plan.getPlanHeath());
-    		}
+    		list1.add(plan.getPlanHeath());
     	});
     	
     	list.removeIf(p-> !list1.contains(p));
