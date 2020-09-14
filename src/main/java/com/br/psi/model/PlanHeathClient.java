@@ -29,7 +29,7 @@ public class PlanHeathClient {
 	@ManyToOne(fetch = FetchType.EAGER)
 	private PlanCode planCode;
 	@ManyToMany(fetch = FetchType.EAGER)
-	@JoinTable(name = "professional_plan_heath_client", joinColumns = @JoinColumn(name = "plan_heath_client_id"), inverseJoinColumns = @JoinColumn(name = "specialty_id"))
+	@JoinTable(name = "professional_plan_heath_client", joinColumns = @JoinColumn(name = "plan_heath_client_id"), inverseJoinColumns = @JoinColumn(name = "professional_id"))
 	private List<Professional> professionalPlanHeathClient;
 
 	public PlanHeathClient() {

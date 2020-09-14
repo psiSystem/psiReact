@@ -10,29 +10,39 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.br.psi.dto.PatientDto;
 import com.br.psi.dto.ValidateCpfAndEmail;
 import com.br.psi.model.Const;
 import com.br.psi.model.Patient;
 import com.br.psi.model.PaymentPatient;
 import com.br.psi.model.Permission;
+import com.br.psi.model.Professional;
+import com.br.psi.model.Schedule;
 import com.br.psi.model.User;
 import com.br.psi.repository.PatientRepository;
 import com.br.psi.repository.PatientRepositoryService;
 import com.br.psi.repository.PaymentPatientRepository;
 import com.br.psi.repository.PermissionRepository;
+import com.br.psi.repository.ProfessionalRepository;
 import com.br.psi.repository.UserRepository;
 
+@Component
 @RestController
 @RequestMapping
 public class PatientController {
 
     @Autowired
     private PatientRepository patientRepository;
+    
+    @Autowired
+    private ProfessionalRepository professionalRepository;
     
     @Autowired
     private PatientRepositoryService patientRepositoryService;
@@ -63,7 +73,7 @@ public class PatientController {
     	patient.getPerson().setClient(user.getPerson().getClient());
     	
     	try {
-    		this.patientRepository.save(patient);	
+    		this.patientRepositoryService.save(patient);	
 		} catch (Exception e) {
 			
 			return new ResponseEntity<Patient>(patient, HttpStatus.BAD_REQUEST);
@@ -94,18 +104,38 @@ public class PatientController {
 
     @Secured({Const.ROLE_CLIENT, Const.ROLE_ADMIN,Const.ROLE_PRFESSIONAL})
     @RequestMapping(value = "/patient/findAll", method = RequestMethod.GET)
-    public ResponseEntity<List<Patient>> list(){
+    public ResponseEntity<List<PatientDto>> list(){
     	User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         
-        return new ResponseEntity<List<Patient>>(patientRepositoryService.findByPersonClient(user.getPerson().getClient()), HttpStatus.OK);
+        return new ResponseEntity<List<PatientDto>>(patientRepositoryService.findByPersonClient(user.getPerson().getClient()), HttpStatus.OK);
     }
     
     @Secured({Const.ROLE_CLIENT, Const.ROLE_ADMIN,Const.ROLE_PRFESSIONAL})
     @RequestMapping(value = "/patient/findAllPatient", method = RequestMethod.POST)
-    public ResponseEntity<List<Patient>> findAllPatient(@RequestBody Patient patient){
+    public ResponseEntity<List<PatientDto>> findAllPatient(@RequestBody Patient patient){
     	User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-    	List<Patient> list = patientRepositoryService.findByPersonClientAndPatient(user.getPerson().getClient(),patient);
-        return new ResponseEntity<List<Patient>>(list, HttpStatus.OK);
+    	List<PatientDto> list = patientRepositoryService.findByPersonClientAndPatient(user.getPerson().getClient(),patient);
+        return new ResponseEntity<List<PatientDto>>(list, HttpStatus.OK);
+    }
+    
+    @Secured({Const.ROLE_CLIENT, Const.ROLE_ADMIN,Const.ROLE_PRFESSIONAL})
+    @RequestMapping(value = "/patient/findById", method = RequestMethod.GET)
+    public ResponseEntity<Patient> findById(@RequestParam(value = "id") Long id){
+    	User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    	Patient patient = patientRepositoryService.findById(id);
+        return new ResponseEntity<Patient>(patient, HttpStatus.OK);
+    }
+    
+    
+    @Secured({Const.ROLE_CLIENT, Const.ROLE_ADMIN,Const.ROLE_PRFESSIONAL})
+    @RequestMapping(value = "/patient/findPaymentPatient", method = RequestMethod.POST)
+    public ResponseEntity<List<PaymentPatient>> findPaymentPatient(@RequestBody Schedule schedule){
+    	User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    	Professional professional = professionalRepository.findAllById(schedule.getProfessional().getId());
+    	
+    	List<PaymentPatient> list = patientRepositoryService.findPaymentPatient(schedule.getPatient(),professional.getFormation());
+    	
+        return new ResponseEntity<List<PaymentPatient>>(list, HttpStatus.OK);
     }
     
 

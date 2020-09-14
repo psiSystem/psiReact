@@ -33,7 +33,7 @@ public class PaymentPatient {
 	@Valid
 	@ManyToOne(fetch = FetchType.EAGER)
 	private Payment payment;
-	@Valid
+//	@Valid
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "patient_id", referencedColumnName = "id")
 	private Patient patient;

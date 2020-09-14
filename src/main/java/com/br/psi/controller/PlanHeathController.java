@@ -52,7 +52,7 @@ public class PlanHeathController {
         return new ResponseEntity<List<PlanHeathClient>>(planHeathClientRepository.findAllByClient(user.getPerson().getClient()), HttpStatus.OK);
     }
     
-    @Secured({Const.ROLE_ADMIN,Const.ROLE_CLIENT})
+    @Secured({Const.ROLE_ADMIN,Const.ROLE_CLIENT,Const.ROLE_PRFESSIONAL})
     @RequestMapping(value = "/planHeath/findAllPlanCode", method = RequestMethod.GET)
     public ResponseEntity<List<PlanCode>> findAllPlanCode(){
         return new ResponseEntity<List<PlanCode>>(planCodeRepository.findAll(), HttpStatus.OK);

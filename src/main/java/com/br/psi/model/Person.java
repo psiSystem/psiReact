@@ -38,8 +38,11 @@ public class Person {
 	@NotNull(message = "{campo.obrigatorio}")
 	@Column(nullable = false)
 	private Date bornDate;
-	@NotBlank(message = "{campo.obrigatorio}")
-	@Email
+	/*
+	 * @NotBlank(message = "{campo.obrigatorio}")
+	 * 
+	 * @Email
+	 */
 	@Column(nullable = false, unique = true)
 	private String email;
 	@NotBlank(message = "{campo.obrigatorio}")
@@ -52,7 +55,6 @@ public class Person {
 	@Valid
 	private Anddress anddress;
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinTable(name = "person_client", joinColumns = @JoinColumn(name = "person_id"), inverseJoinColumns = @JoinColumn(name = "client_id"))
 	private Client client;
 	@NotBlank(message = "{campo.obrigatorio}")
 	private String phone;

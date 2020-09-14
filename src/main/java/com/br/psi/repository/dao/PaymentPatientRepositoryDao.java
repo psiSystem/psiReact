@@ -23,13 +23,16 @@ public class PaymentPatientRepositoryDao implements PaymentPatientRepositoryServ
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<PaymentPatient> findByPatientPersonClient(Client client, PaymentPatient paymentPatient) {
-		 List<PaymentPatient> resultList = (List<PaymentPatient>) entityManager.createNativeQuery("select pp.* from payment_patient pp "
+		 return entityManager.createNativeQuery("select pp.*, s.amount amountConsumo from payment_patient pp "
 				 	+ " inner join patient p on p.id = pp.patient_id"	
 				 	+ " inner join person pe on pe.id = p.person_id"
-					+ " inner join person_client cp on cp.person_id = pe.id"
-					+ " where pe.name like :name and cp.client_id =:client",PaymentPatient.class).setParameter("client", client.getId()).setParameter("name", "%"+paymentPatient.getPatient().getPerson().getName()+"%")
+				 	+" outer apply(" + 
+				 	"	select sum(isnull(s.amount,0)) amount from schedule s where s.payment_patient_id = pp.id\r\n" + 
+				 	") s\r\n" + 
+				 	""
+					+ " where pe.name like :name and pe.client_id =:client",PaymentPatient.class).setParameter("client", client.getId()).setParameter("name", "%"+paymentPatient.getPatient().getPerson().getName()+"%")
 					.getResultList();
-		return resultList;
+		
 	}
 	
 	

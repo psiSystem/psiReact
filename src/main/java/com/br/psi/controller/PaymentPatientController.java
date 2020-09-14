@@ -69,12 +69,6 @@ public class PaymentPatientController {
     	User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     	List<PaymentPatient> list = paymentPatientRepositoryService.findByPatientPersonClient(user.getPerson().getClient(),paymentPatient);
     	
-    	list.forEach(payment ->{
-    		List<Schedule> Schedules = scheduleRepository.findByPaymentPatient(payment);
-    		if(Schedules!= null) {
-    			payment.setAmountConsumo(Schedules.size());
-    		}
-    	});
     	
         return new ResponseEntity<List<PaymentPatient>>(list, HttpStatus.OK);
     }

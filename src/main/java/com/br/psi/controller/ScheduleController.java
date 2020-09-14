@@ -83,20 +83,20 @@ public class ScheduleController {
 
 	private void creatList(Schedule schedule, List<Schedule> list) throws Exception {
 		Professional professional = professionalRepository.findAllById(schedule.getProfessional().getId());
-		List<PaymentPatient> paymentPatients = paymentPatientRepository.findByPatientAndFormation(schedule.getPatient(),professional.getFormation());;
+//		List<PaymentPatient> paymentPatients = paymentPatientRepository.findByPatientAndFormation(schedule.getPatient(),professional.getFormation());;
 		int count = list.size()+1;
 		int contol = 1;
 		int j = 1;
 		list.add(schedule);
-		for (PaymentPatient paymentPatient : paymentPatients) {
+//		for (PaymentPatient paymentPatient : paymentPatients) {
 			Integer amountMultiple = schedule.getKind().getAmountMultiple();
-				if(paymentPatient.getAmount() != null) {
-					List<Schedule> findByPaymentPatient = scheduleRepository.findByPaymentPatient(paymentPatient);
-					amountMultiple = paymentPatient.getAmount() - findByPaymentPatient.size() - contol ;
+				if(schedule.getPaymentPatient().getAmount() != null) {
+					List<Schedule> findByPaymentPatient = scheduleRepository.findByPaymentPatient(schedule.getPaymentPatient());
+					amountMultiple = (schedule.getPaymentPatient().getAmount() - findByPaymentPatient.size() - contol) ;
 				}
 			
 				if(schedule.getPaymentPatient() == null && amountMultiple > 0) {
-					schedule.setPaymentPatient(paymentPatient);
+					schedule.setPaymentPatient(schedule.getPaymentPatient());
 					contol = 0;
 				}
 			for (int i = 1; i <= amountMultiple ; i++) {
@@ -110,13 +110,15 @@ public class ScheduleController {
 				dateEnd.setDate(dateEnd.getDate() + (schedule.getKind().getAmountDay() * j));
 				model.setDateStart(dateStart);
 				model.setDateEnd(dateEnd);
+				model.setAmount(schedule.getAmount());
+				model.setPlanCode(schedule.getPlanCode());
 				model.setDayOfWeek(schedule.getDayOfWeek());
-				model.setPaymentPatient(paymentPatient);
+				model.setPaymentPatient(schedule.getPaymentPatient());
 				model.setOfficeRoom(schedule.getOfficeRoom());
 				list.add(model);
 				j+=1;
 			}
-			}
+//			}
 
 		if(list.size() <= count)
 			throw new Exception("Paciente "+schedule.getPatient().getPerson().getName()+" não possui créditos disponível para especialidade "+ professional.getFormation().getName());
@@ -127,15 +129,15 @@ public class ScheduleController {
 	private void createUnique(Schedule schedule, List<Schedule> list) throws Exception {
 		//alterar metodo para validar status de pagamentos validos.
 		Professional professional = professionalRepository.findAllById(schedule.getProfessional().getId());
-		List<PaymentPatient> paymentPatients = paymentPatientRepository.findByPatientAndFormation(schedule.getPatient(),professional.getFormation());
-		for (PaymentPatient paymentPatient : paymentPatients) {
-			List<Schedule> findByPaymentPatient = scheduleRepository.findByPaymentPatient(paymentPatient);
-				if(paymentPatient.getAmount() == null || findByPaymentPatient.size() < paymentPatient.getAmount()) {
-					schedule.setPaymentPatient(paymentPatient);
+//		List<PaymentPatient> paymentPatients = paymentPatientRepository.findByPatientAndFormation(schedule.getPatient(),professional.getFormation());
+//		for (PaymentPatient paymentPatient : paymentPatients) {
+			List<Schedule> findByPaymentPatient = scheduleRepository.findByPaymentPatient(schedule.getPaymentPatient());
+				if(schedule.getPaymentPatient() != null && (schedule.getPaymentPatient().getAmount() == null || findByPaymentPatient.size() < schedule.getPaymentPatient().getAmount())) {
+//					schedule.setPaymentPatient(paymentPatient);
 					this.scheduleRepository.save(schedule);
 					return;
 				}
-		}
+//		}
 		throw new Exception("Paciente "+schedule.getPatient().getPerson().getName()+" não possui créditos disponível para especialidade "+ professional.getFormation().getName());
 		
 	}

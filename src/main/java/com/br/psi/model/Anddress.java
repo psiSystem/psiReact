@@ -17,7 +17,7 @@ public class Anddress {
 	@NotBlank(message = "{campo.obrigatorio}")
 	private String anddress;
 	@Column(nullable = false)
-	@NotBlank(message = "{campo.obrigatorio}")
+	/* @NotBlank(message = "{campo.obrigatorio}") */
 	private String neighborhood;
 	@Column(nullable = false)
 	@NotBlank(message = "{campo.obrigatorio}")

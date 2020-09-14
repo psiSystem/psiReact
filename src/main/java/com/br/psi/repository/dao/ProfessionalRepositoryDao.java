@@ -42,8 +42,7 @@ public class ProfessionalRepositoryDao implements ProfessionalRepositoryService,
 	public List<Professional> findByPersonClientAndPersonName(Client client, String name) {
 		List<Professional>  resultList = (List<Professional>) entityManager.createNativeQuery("select p.* from professional p "
 				+ " inner join person pe on pe.id = p.person_id"
-				+ " inner join person_client cp on cp.person_id = pe.id"
-				+ " where pe.name like :name and cp.client_id =:client",Professional.class).setParameter("client", client.getId()).setParameter("name", "%"+name+"%")
+				+ " where pe.name like :name and pe.client_id =:client",Professional.class).setParameter("client", client.getId()).setParameter("name", "%"+name+"%")
 				.getResultList();
 		return resultList; 
 	}
@@ -64,19 +63,18 @@ public class ProfessionalRepositoryDao implements ProfessionalRepositoryService,
 				"       max(sc.date_end) dateEnd\r\n" + 
 				"FROM professional p\r\n" + 
 				"INNER JOIN person pr ON pr.id = p.person_id\r\n" + 
-				"INNER JOIN person_client pc ON pc.person_id = pr.id\r\n" + 
 				"INNER JOIN schedule sc ON sc.professional_id = p.id\r\n" + 
 				"INNER JOIN payment_patient pp ON pp.id = sc.payment_patient_id \r\n" + 
 				"INNER JOIN patient pt ON pt.id = pp.patient_id\r\n" + 
 				"INNER JOIN person prt ON prt.id = pt.person_id\r\n" + 
 				"LEFT JOIN plan_heath ph ON ph.id = pp.plan_health_id\r\n" + 
 				"left join  plan_heath_client phc on phc.plan_heath_id = pp.plan_health_id\r\n" + 
-				"AND phc.client_id = pc.client_id\r\n" + 
+				"AND phc.client_id = pr.client_id\r\n" + 
 				"AND phc.formation_id = p.formation_id\r\n" + 
 				"and phc.plan_code_id = sc.plan_code_id\r\n" + 
 				"INNER JOIN payment pay ON pay.id = pp.payment_id\r\n" + 
 				"WHERE sc.date_start <= GETDATE()\r\n" + 
-				"and pc.client_id = isnull(:client,pc.client_id)\r\n" + 
+				"and pr.client_id = isnull(:client,pr.client_id)\r\n" + 
 				"and p.id = isnull(:professional,p.id)\r\n" + 
 				"and sc.date_start >= isnull(:dateStart,sc.date_start)\r\n" + 
 				"and sc.date_start <= :dateEnd\r\n" + 

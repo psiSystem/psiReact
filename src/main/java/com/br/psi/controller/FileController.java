@@ -7,6 +7,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +39,7 @@ import com.br.psi.repository.ProfessionalRepository;
 @RestController
 @RequestMapping
 public class FileController {
-	private static final String path = "/uploads/";
+	private static final String path = "/home/fabiofreitas1989/uploads/";
     @Autowired
     private ProfessionalRepository professionalRepository;
     
@@ -54,6 +55,9 @@ public class FileController {
     @Autowired
     private ServletContext servletContext;
     
+    @Autowired
+    private HttpServletRequest request;
+    
     @SuppressWarnings("resource")
 	@Secured({Const.ROLE_CLIENT, Const.ROLE_ADMIN})
     @RequestMapping(value = "/file/saveProfessionalFile", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -64,7 +68,7 @@ public class FileController {
     		) throws  IOException{
     	User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     	 String realPathtoUploads =  path;
-    	 
+    	 request.getServletContext().getRealPath(path);
     	 if (!new File(realPathtoUploads).exists()) {
     		 new File(realPathtoUploads).mkdir();
     	 }

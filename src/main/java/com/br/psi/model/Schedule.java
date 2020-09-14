@@ -8,6 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.Transient;
 
 @Entity
 public class Schedule {
@@ -31,6 +32,16 @@ public class Schedule {
 	private Date createDate;
 	@ManyToOne(fetch = FetchType.EAGER)
 	private PlanCode planCode;
+	private Integer amount;
+
+	
+	public Integer getAmount() {
+		return amount;
+	}
+
+	public void setAmount(Integer amount) {
+		this.amount = amount;
+	}
 
 	public Schedule() {
 		super();
