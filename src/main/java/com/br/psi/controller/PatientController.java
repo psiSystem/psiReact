@@ -73,7 +73,7 @@ public class PatientController {
     	patient.getPerson().setClient(user.getPerson().getClient());
     	
     	try {
-    		this.patientRepositoryService.save(patient);	
+    		this.patientRepository.save(patient);	
 		} catch (Exception e) {
 			
 			return new ResponseEntity<Patient>(patient, HttpStatus.BAD_REQUEST);

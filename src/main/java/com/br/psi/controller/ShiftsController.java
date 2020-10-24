@@ -40,7 +40,8 @@ public class ShiftsController {
     @Autowired
     private ShiftsRepositoryService shiftsRepositoryService;
     private List<Shifts> list ;
-
+    SimpleDateFormat simpleDateFormat = new SimpleDateFormat();
+    SimpleDateFormat simpleDateFormat2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     @Secured({Const.ROLE_ADMIN,Const.ROLE_CLIENT})
     @RequestMapping(value = "/shift/save", method = RequestMethod.POST)
     public ResponseEntity<Shifts> save(@RequestBody Shifts shift){
@@ -60,12 +61,33 @@ public class ShiftsController {
        
         return new ResponseEntity<List<Shifts>>( listShift,HttpStatus.OK);
     }
+    
+    @Secured({Const.ROLE_ADMIN,Const.ROLE_CLIENT})
+    @RequestMapping(value = "/shift/editShifts", method = RequestMethod.POST)
+    public ResponseEntity<Shifts> editar(@RequestBody Shifts shift){
+    	shift.getDayWeek().setDayOfWeek(DayWeek.dayWeek(shift.getDayWeek()));
+    	dayWeekRepository.save(shift.getDayWeek());
+   		shiftsRepository.save(shift);
+        return new ResponseEntity<Shifts>( shift,HttpStatus.OK);
+    }
+
 
     @Secured({Const.ROLE_CLIENT, Const.ROLE_ADMIN,Const.ROLE_PRFESSIONAL})
     @RequestMapping(value = "/shift/findAll", method = RequestMethod.GET)
     public ResponseEntity<List<Shifts>> list(){
     	User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return new ResponseEntity<List<Shifts>>(shiftsRepository.findByDayWeekOfficeRoomClient(user.getPerson().getClient()), HttpStatus.OK);
+    	List<Shifts> findByDayWeekOfficeRoomClient = shiftsRepository.findByDayWeekOfficeRoomClient(user.getPerson().getClient());
+    	findByDayWeekOfficeRoomClient.forEach(shift->{
+    		try {
+				shift.setTimeEnd(simpleDateFormat2.format(simpleDateFormat.parse(shift.getTimeEnd())));
+				shift.setTimeStart(simpleDateFormat2.format(simpleDateFormat.parse(shift.getTimeStart())));
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    		
+    	});
+        return new ResponseEntity<List<Shifts>>(findByDayWeekOfficeRoomClient, HttpStatus.OK);
     }
     @Secured({Const.ROLE_CLIENT, Const.ROLE_ADMIN,Const.ROLE_PRFESSIONAL})
     @RequestMapping(value = "/shift/delete", method = RequestMethod.POST)
@@ -79,8 +101,19 @@ public class ShiftsController {
     @Secured({Const.ROLE_CLIENT, Const.ROLE_ADMIN,Const.ROLE_PRFESSIONAL})
     @RequestMapping(value = "/shift/findAllOfficeRoom", method = RequestMethod.POST)
     public ResponseEntity<List<Shifts>> listOfficeRoom(@RequestBody OfficeRoom officeRoom){
-    	User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return new ResponseEntity<List<Shifts>>(shiftsRepository.findByDayWeekOfficeRoom(officeRoom), HttpStatus.OK);
+    	
+    	List<Shifts> findByDayWeekOfficeRoomClient = shiftsRepository.findByDayWeekOfficeRoom(officeRoom);
+    	findByDayWeekOfficeRoomClient.forEach(shift->{
+    		try {
+				shift.setTimeEnd(simpleDateFormat2.format(simpleDateFormat.parse(shift.getTimeEnd())));
+				shift.setTimeStart(simpleDateFormat2.format(simpleDateFormat.parse(shift.getTimeStart())));
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    		
+    	});
+        return new ResponseEntity<List<Shifts>>(findByDayWeekOfficeRoomClient, HttpStatus.OK);
     }
 
     @Secured({Const.ROLE_CLIENT, Const.ROLE_ADMIN,Const.ROLE_PRFESSIONAL})
@@ -93,15 +126,21 @@ public class ShiftsController {
     	List<Object> findByTimeAvailable = shiftsRepositoryService.findByTimeAvailable(filter, user.getPerson().getClient());
     	
     	findByDayWeekOfficeRoom.forEach((shifts) -> {
-    		getCalendar(shifts,findByTimeAvailable);
+    		try {
+				getCalendar(shifts,findByTimeAvailable);
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
     	});
     	
         return new ResponseEntity<List<Shifts>>(list, HttpStatus.OK);
     }
 
-	private void getCalendar(Shifts shifts, List<Object> findByTimeAvailable) {
-		Date start = shifts.getTimeStart();
-		Date ended = shifts.getTimeEnd();
+	private void getCalendar(Shifts shifts, List<Object> findByTimeAvailable) throws ParseException {
+		
+		Date start = simpleDateFormat.parse(shifts.getTimeStart());;
+		Date ended = simpleDateFormat.parse(shifts.getTimeEnd()); 
 		LocalDateTime now = LocalDateTime.now();
 		
 		for(int i = 0; i < 56; i++) {
@@ -109,8 +148,8 @@ public class ShiftsController {
 					LocalDateTime localStart = LocalDateTime.of(now.getYear(), now.getMonthValue(), now.getDayOfMonth(), start.getHours(), start.getMinutes());
 					LocalDateTime localEned = LocalDateTime.of(now.getYear(), now.getMonthValue(), now.getDayOfMonth(), ended.getHours(), ended.getMinutes());
 					Shifts model = new Shifts();
-					model.setTimeStart(Date.from(localStart.atZone(ZoneId.systemDefault()).toInstant()));
-					model.setTimeEnd(Date.from(localEned.atZone(ZoneId.systemDefault()).toInstant()));
+					model.setTimeStart(localStart.toString());
+					model.setTimeEnd(localEned.toString());
 					model.setProfessional(shifts.getProfessional());
 					model.setDayWeek(shifts.getDayWeek());
 					model.setTimeAvailable(getAvailable(findByTimeAvailable,model));
@@ -126,7 +165,7 @@ public class ShiftsController {
 		
 	}
 
-	private Boolean getAvailable(List<Object> findByTimeAvailable, Shifts shifts) {
+	private Boolean getAvailable(List<Object> findByTimeAvailable, Shifts shifts) throws ParseException {
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		
 		for (Object object : findByTimeAvailable) {
@@ -140,7 +179,7 @@ public class ShiftsController {
 			}
 			String professionalId = obj[4].toString();
 			String dayWeek = obj[1].toString();
-			if (dateStart.compareTo(shifts.getTimeStart()) == 0
+			if (dateStart.compareTo(simpleDateFormat.parse(shifts.getTimeStart())) == 0
 					&& professionalId.equals(shifts.getProfessional().getId().toString())
 					&& dayWeek.equals(shifts.getDayWeek().getDayOfWeek().toString())) {
 				return false;

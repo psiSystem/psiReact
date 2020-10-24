@@ -17,8 +17,8 @@ public class Shifts {
 	private Long id;
 	@ManyToOne(fetch = FetchType.EAGER)
 	private DayWeek dayWeek;
-	private Date timeStart;
-	private Date timeEnd;
+	private String timeStart;
+	private String timeEnd;
 	@ManyToOne(fetch = FetchType.EAGER)
 	private Professional professional;
 	private Date createDate;
@@ -53,19 +53,19 @@ public class Shifts {
 		this.dayWeek = dayWeek;
 	}
 
-	public Date getTimeStart() {
+	public String getTimeStart() {
 		return timeStart;
 	}
 
-	public void setTimeStart(Date timeStart) {
+	public void setTimeStart(String timeStart) {
 		this.timeStart = timeStart;
 	}
 
-	public Date getTimeEnd() {
+	public String getTimeEnd() {
 		return timeEnd;
 	}
 
-	public void setTimeEnd(Date timeEnd) {
+	public void setTimeEnd(String timeEnd) {
 		this.timeEnd = timeEnd;
 	}
 

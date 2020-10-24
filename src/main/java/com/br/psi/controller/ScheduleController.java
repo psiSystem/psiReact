@@ -1,5 +1,7 @@
 package com.br.psi.controller;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -247,7 +249,7 @@ public class ScheduleController {
 	
 	@Secured({Const.ROLE_ADMIN,Const.ROLE_PRFESSIONAL})
 	@RequestMapping(value = "/schedule/findAllByprofessional", method = RequestMethod.GET)
-	public ResponseEntity<List<Schedule>> findAllByprofessional(){
+	public ResponseEntity<List<Schedule>> findAllByprofessional() throws ParseException{
 		User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 	    Professional professional = professionalRepositoryService.findByPerson(user.getPerson());
 		 
@@ -271,7 +273,7 @@ public class ScheduleController {
 		return new ResponseEntity<List<Schedule>>(list, HttpStatus.OK);
 	}
 	
-	private List<Schedule> createListSchedule(List<Schedule> list, Professional professional) {
+	private List<Schedule> createListSchedule(List<Schedule> list, Professional professional) throws ParseException {
 		List<Shifts> shifts = shiftsRepository.findByProfessionalId(professional.getId());
 		
 		List<Schedule> listSchedule = list;
@@ -279,8 +281,8 @@ public class ScheduleController {
 		for (Shifts shift : shifts) {
 			LocalDateTime now = LocalDateTime.now();
 			for(int i = 0; i < 56; i++) {
-				Date start = shift.getTimeStart();
-				Date ended = shift.getTimeEnd();
+				Date start = format.parse(shift.getTimeStart());
+				Date ended = format.parse(shift.getTimeEnd());
 				int timeSession = 30;
 				long st = start.getTime();
 				long end = ended.getTime();

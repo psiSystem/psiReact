@@ -69,11 +69,14 @@ public class ShiftsRepositoryDao implements ShiftsRepositoryService, Serializabl
 	public List<Shifts> findByProfessionalAndProfessionalFormation(FilterCalendar filter, Client client) {
 		List<Shifts> Shifts = entityManager.createNativeQuery("select s.* from shifts s\r\n" + 
 				"inner join day_week dw on dw.id = s.day_week_id\r\n" + 
+				" inner join office_room office on office.id = dw.office_room_id "+
 				"left join professional p on p.id = s.professional_id\r\n" + 
 				"where s.professional_id = isnull(:professional,s.professional_id)\r\n" + 
-				"and p.formation_id = isnull(:formation,p.formation_id)",Shifts.class)
+				"and p.formation_id = isnull(:formation,p.formation_id)"+
+				" and office.client_id = :client",Shifts.class)
 			 .setParameter("professional", filter.getProfessional() != null && filter.getProfessional().getId() != null ? filter.getProfessional().getId() : null)
 			 .setParameter("formation", filter.getFormation() != null && filter.getFormation().getId() != null? filter.getFormation().getId() : null)
+			 .setParameter("client", client.getId())
 				.getResultList();
 		
 		return Shifts;
